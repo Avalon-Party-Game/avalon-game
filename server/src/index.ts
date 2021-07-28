@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { Player } from "./charater/base";
+import { Player } from "./room/player";
 import { room } from "./room";
 
 const io = new Server();

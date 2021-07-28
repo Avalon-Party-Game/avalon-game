@@ -1,4 +1,6 @@
-import { ISerializable, LoyalServant, Player } from "../charater/base";
+import { LoyalServant } from "../charater/loyal-servant";
+import type { ISerializable } from "../charater/base";
+import type { Player } from "./player";
 
 export class Room implements ISerializable {
     players: Player[] = [];
