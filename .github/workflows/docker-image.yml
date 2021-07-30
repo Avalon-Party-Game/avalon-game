@@ -26,4 +26,4 @@ jobs:
       run: docker build . --file Dockerfile --tag hlhr202/avalon:$(date +%s)
       
     - name: Push Docker image
-      run: docker push hlhr202/avalon:$(date +%s)
+      run: docker push ghcr.io/hlhr202/avalon:$(date +%s)
