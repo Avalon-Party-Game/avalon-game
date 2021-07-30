@@ -2,9 +2,10 @@ import { TaskPoll, Vote } from "../task";
 import { Room } from "../room";
 import { Stage } from "./stage";
 import type { Server, Socket } from "socket.io";
+import { autorun, makeAutoObservable, observable } from "mobx";
 
-export class GameState {
-    public currentStage: Stage = Stage.INITIAL;
+export class GameContext {
+    public currentStage = Stage.WAITING;
     public room: Room;
     public taskPoll: TaskPoll;
 
@@ -13,66 +14,75 @@ export class GameState {
     }
 
     constructor(private io: Server) {
-        this.room = new Room(io);
-        this.taskPoll = new TaskPoll(this.room);
+        makeAutoObservable(this, {
+            room: false,
+            taskPoll: false,
+            boradcast: false,
+        });
+        autorun(() => {
+            this.boradcast.emit("stageChange", this.currentStage);
+        });
+        this.taskPoll = new TaskPoll(this);
+        this.room = new Room(this);
     }
 
     joinPlayer = (name: string | string[] | undefined, socket: Socket) => {
         if (!name || name === "" || typeof name !== "string") {
+            socket.emit("kick");
             socket.disconnect(true);
         } else {
-            const player = this.room.joinPlayer(name, socket);
-            this.boradcast.emit("roomChange", this.room);
-            socket.emit("stageChange", this.currentStage);
-            socket.emit("taskChange", this.taskPoll);
-            socket.emit("playerChange", player);
+            const externalPlayerJoining =
+                this.currentStage !== Stage.WAITING &&
+                !this.room.getExistingPlayer(name);
+
+            if (externalPlayerJoining) {
+                socket.emit("kick");
+                socket.disconnect(true);
+            } else {
+                const player = this.room.joinPlayer(name, socket);
+                socket.emit("roomChange", this.room);
+                socket.emit("stageChange", this.currentStage);
+                socket.emit("playerChange", player);
+            }
         }
     };
 
     startWaiting = () => {
         this.currentStage = Stage.WAITING;
-        this.room.startWaiting();
-        this.taskPoll.startWaiting();
-        this.boradcast.emit("stageChange", this.currentStage);
-        this.boradcast.emit("roomChange", this.room);
-        this.boradcast.emit("taskChange", this.taskPoll);
     };
 
     startGame = () => {
         this.currentStage = Stage.STARTED;
-        this.room.startGame();
-        this.taskPoll.startGame();
-        this.boradcast.emit("stageChange", this.currentStage);
-        this.boradcast.emit("roomChange", this.room);
-        this.boradcast.emit("taskChange", this.taskPoll);
+    };
+
+    kickPlayer = (name: string) => {
+        this.room.kickPlayer(name);
+    };
+
+    kickOffline = () => {
+        this.room.kickOffline();
     };
 
     startNewElection = (playersName: string[]) => {
         this.currentStage = Stage.ELECTION;
         this.taskPoll.startNewElection(playersName);
-        this.boradcast.emit("stageChange", this.currentStage);
-        this.boradcast.emit("taskChange", this.taskPoll);
     };
 
     voteForPlayersFrom = (playerName: string, vote: Vote) => {
         this.taskPoll.voteForPlayersFrom(playerName, vote);
-        this.boradcast.emit("taskChange", this.taskPoll);
         if (this.taskPoll.currentElectionStage.type === "DONE") {
             if (this.taskPoll.currentElectionStage.result) {
                 this.currentStage = Stage.POLLING;
             } else {
-                this.currentStage = Stage.STARTED;
+                this.currentStage = Stage.ONGOING;
             }
-            this.boradcast.emit("stageChange", this.currentStage);
         }
     };
 
     voteForTaskFrom = (playerName: string, vote: Vote) => {
         this.taskPoll.voteForTaskFrom(playerName, vote);
-        this.boradcast.emit("taskChange", this.taskPoll);
         if (this.taskPoll.currentPollingStage.type === "DONE") {
-            this.currentStage = Stage.STARTED;
-            this.boradcast.emit("stageChange", this.currentStage);
+            this.currentStage = Stage.ONGOING;
         }
     };
 }

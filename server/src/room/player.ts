@@ -5,6 +5,7 @@ export interface PlayerDTO {
     name: string;
     role?: Character;
     roleName?: string;
+    connected?: boolean;
 }
 
 export class Player implements ISerializable {
@@ -18,6 +19,7 @@ export class Player implements ISerializable {
         return {
             name: this.name,
             role: this.role,
+            connected: this.socket.connected,
         };
     }
 }

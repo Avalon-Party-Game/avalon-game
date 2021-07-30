@@ -1,7 +1,7 @@
 export enum Stage {
-    INITIAL,
     WAITING,
     STARTED,
+    ONGOING,
     ELECTION,
     POLLING,
 }

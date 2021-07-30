@@ -1,10 +1,10 @@
 {
-  "name": "server",
+  "name": "@hlhr202/server",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/index.ts",
+    "start": "node -r esbuild-register ./src/index.ts",
+    "dev": "nodemon ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Liuhaoran Huang",

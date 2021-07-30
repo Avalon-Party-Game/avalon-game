@@ -1,14 +1,16 @@
 import React, { useContext } from "react";
 import { autorun, toJS } from "mobx";
+import { history } from "../router";
 import { io } from "socket.io-client";
+import { message } from "antd";
 import { roomStore } from "../store/room";
+import { taskStore } from "../store/task";
 import { userStore } from "../store/user";
 import type { Socket } from "socket.io-client";
 import type { RoomDTO } from "../../../server/src/room";
 import type { Stage } from "../../../server/src/statemachine/stage";
 import type { PlayerDTO } from "../../../server/src/room/player";
 import type { TaskDTO } from "../../../server/src/task";
-import { taskStore } from "../store/task";
 
 const ws = import.meta.env.DEV
     ? "ws://localhost:3100"
@@ -50,8 +52,15 @@ export class SocketClient {
             taskStore.updateTaskPoll(taskPoll);
         });
 
+        this.socket.on("kick", () => {
+            message.error("连接被中断");
+            this.socket.disconnect();
+            userStore.updateUserInfo(null);
+            history.push("/");
+        });
+
         autorun(() => {
-            if (userStore.userInfo && this.socket.disconnected) {
+            if (userStore.userInfo?.name && this.socket.disconnected) {
                 console.log("connecting: ", toJS(userStore.userInfo));
                 const name = userStore.userInfo.name;
                 this.socket.io.opts.query = { name };

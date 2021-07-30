@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Layout, Card, Collapse, List, Row, Col } from "antd";
+import { Button, Layout, Card, Collapse, Row, Col, Space } from "antd";
 import { autorun } from "mobx";
 import { observer } from "mobx-react";
 import { roomStore } from "../store/room";
@@ -44,6 +44,8 @@ export const InGame = observer(() => {
                             switch (roomStore.stage) {
                                 case Stage.STARTED:
                                     return "游戏开始";
+                                case Stage.ONGOING:
+                                    return "游戏继续";
                                 case Stage.ELECTION:
                                     return "投票选出执行任务的人";
                                 case Stage.POLLING:
@@ -62,22 +64,29 @@ export const InGame = observer(() => {
                                 title={`${userStore.playerInfo?.name} - 你扮演的角色：${userStore.playerInfo?.role?.name}`}
                             >
                                 <div>你视野中的人</div>
-                                <Row gutter={12} style={{ paddingTop: "10px" }}>
+                                <Space>
                                     {userStore.playerInfo?.role?.visible.map(
                                         (player) => (
-                                            <Col span={4}>
-                                                <Card
+                                            <div
+                                                key={player.name}
+                                                style={{ paddingTop: "5px" }}
+                                            >
+                                                <div>{player.name}</div>
+                                                <div>
+                                                    {player.roleName ?? "未知"}
+                                                </div>
+                                                {/* <Card
                                                     size="small"
                                                     title={player.name}
                                                     key={player.name}
                                                 >
                                                     {player.roleName ??
                                                         "未知角色"}
-                                                </Card>
-                                            </Col>
+                                                </Card> */}
+                                            </div>
                                         )
                                     )}
-                                </Row>
+                                </Space>
                             </Card>
                         </Collapse.Panel>
                         <Collapse.Panel header="投票区" key="2">
@@ -95,10 +104,13 @@ export const InGame = observer(() => {
                             <Button
                                 block
                                 type="primary"
-                                disabled={roomStore.stage !== Stage.STARTED}
+                                disabled={
+                                    roomStore.stage === Stage.ELECTION ||
+                                    roomStore.stage === Stage.POLLING
+                                }
                                 onClick={() => setShowElection(true)}
                             >
-                                选择执行任务的人员
+                                选择人员
                             </Button>
                         </Col>
                         <Col span={12}>

@@ -1,13 +1,13 @@
-import { Assasin } from './assasin';
-import { LoyalServant } from './loyal-servant';
-import { Merlin } from './merlin';
-import { Modred } from './modred';
-import { Morgana } from './morgana';
-import { Oberon } from './oberon';
-import { Percival } from './percival';
+import { Assasin } from "./assasin";
+import { LoyalServant } from "./loyal-servant";
+import { Merlin } from "./merlin";
+import { Modred } from "./modred";
+import { Morgana } from "./morgana";
+import { Oberon } from "./oberon";
+import { Percival } from "./percival";
 import type { Room } from "../room";
 import type { Character } from "./base";
-import { Minions } from './minions';
+import { Minions } from "./minions";
 
 const shuffleArray = <T>(inputArray: Array<T>) => {
     const array = Array.from(inputArray);
@@ -89,11 +89,9 @@ export const arrangementTable: { [x: number]: Character["type"][] } = {
 export class RolePicker {
     role: Character["type"][] = [];
 
-    constructor(private room: Room) {}
-
-    reset = () => {
-        this.role = shuffleArray(arrangementTable[this.room.count] ?? []);
-    };
+    constructor(count: number) {
+        this.role = shuffleArray(arrangementTable[count] ?? []);
+    }
 
     pick = () => {
         return this.role.pop();

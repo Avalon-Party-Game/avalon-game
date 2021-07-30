@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "npm-run-all --parallel start dev:client",
+        "dev": "npm run dev --workspace=client & npm run dev --workspace=server",
         "dev:client": "npm run dev --workspace=client",
         "build": "npm run build --workspace=client",
         "start": "npm run start --workspace=server",
@@ -21,6 +21,7 @@
     },
     "homepage": "https://github.com/hlhr202/avalon-game#readme",
     "dependencies": {
+        "@ant-design/icons": "^4.6.2",
         "@types/express": "^4.17.13",
         "@types/react-router-dom": "^5.1.8",
         "antd": "^4.16.9",

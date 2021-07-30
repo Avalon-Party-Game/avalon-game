@@ -1,11 +1,14 @@
 import React from "react";
-import { autorun } from "mobx";
-import { Button, Layout } from "antd";
+import UserDeleteOutlined from "@ant-design/icons/UserDeleteOutlined";
+import { autorun, toJS } from "mobx";
+import { Button, Layout, List, Row, Col } from "antd";
 import { Observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/statemachine/stage";
 import { useHistory } from "react-router";
 import { useSocketClient } from "../lib/socket";
+import WifiOutlined from "@ant-design/icons/WifiOutlined";
+import DisconnectOutlined from "@ant-design/icons/DisconnectOutlined";
 
 export const WaitingRoom = () => {
     const history = useHistory();
@@ -15,9 +18,20 @@ export const WaitingRoom = () => {
         socketClient.socket.emit("startGame");
     }, []);
 
+    const handleKickPlayer = React.useCallback((playerName: string) => {
+        socketClient.socket.emit("kickPlayer", playerName);
+    }, []);
+
+    const handleKickOffline = React.useCallback(() => {
+        socketClient.socket.emit("kickOffline");
+    }, []);
+
     React.useEffect(() => {
         return autorun(() => {
-            if (roomStore.stage === Stage.STARTED) {
+            if (
+                roomStore.stage === Stage.STARTED ||
+                roomStore.stage === Stage.ONGOING
+            ) {
                 history.push("/in-game");
             }
         });
@@ -26,35 +40,66 @@ export const WaitingRoom = () => {
     return (
         <Layout style={{ height: "100vh" }}>
             <Layout.Header>
-                <h1>Waiting</h1>
+                <h1>等待中...</h1>
             </Layout.Header>
             <Layout.Content style={{ padding: "30px" }}>
                 <Observer>
                     {() => (
-                        <>
-                            {roomStore.room.players.map((player) => (
-                                <div key={player.name}>{player.name}</div>
-                            ))}
-                        </>
+                        <List
+                            bordered
+                            dataSource={toJS(roomStore.room).players}
+                            renderItem={(player) => (
+                                <List.Item
+                                    extra={
+                                        <Button
+                                            icon={
+                                                <UserDeleteOutlined
+                                                    onClick={() =>
+                                                        handleKickPlayer(
+                                                            player.name
+                                                        )
+                                                    }
+                                                />
+                                            }
+                                        ></Button>
+                                    }
+                                >
+                                    <span>
+                                        {player.connected ? (
+                                            <WifiOutlined />
+                                        ) : (
+                                            <DisconnectOutlined />
+                                        )}{" "}
+                                        {player.name}
+                                    </span>
+                                </List.Item>
+                            )}
+                        />
                     )}
                 </Observer>
             </Layout.Content>
             <Layout.Footer>
-                <Observer>
-                    {() => (
-                        <Button
-                            disabled={
-                                roomStore.room.count < 6 ||
-                                roomStore.room.count > 10
-                            }
-                            type="primary"
-                            style={{ width: "100%" }}
-                            onClick={handleStart}
-                        >
-                            Start
+                <Row gutter={12}>
+                    <Col span={12}>
+                        <Button block onClick={handleKickOffline}>
+                            清除不在线玩家
                         </Button>
-                    )}
-                </Observer>
+                    </Col>
+                    <Col span={12}>
+                        <Observer>
+                            {() => (
+                                <Button
+                                    disabled={!roomStore.canStartGame}
+                                    type="primary"
+                                    style={{ width: "100%" }}
+                                    onClick={handleStart}
+                                >
+                                    开始游戏
+                                </Button>
+                            )}
+                        </Observer>
+                    </Col>
+                </Row>
             </Layout.Footer>
         </Layout>
     );

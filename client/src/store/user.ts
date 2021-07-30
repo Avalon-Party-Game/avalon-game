@@ -20,11 +20,11 @@ class UserStore {
         });
     }
 
-    updateUserInfo = (userInfo: IUserInfo) => {
+    updateUserInfo = (userInfo: IUserInfo | null) => {
         this.userInfo = userInfo;
     };
 
-    updatePlayerInfo = (playerInfo: PlayerDTO) => {
+    updatePlayerInfo = (playerInfo: PlayerDTO | null) => {
         this.playerInfo = playerInfo;
     };
 }

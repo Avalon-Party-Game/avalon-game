@@ -1,5 +1,7 @@
 import type { ISerializable } from "../charater/base";
-import type { Room } from "../room";
+import { autorun, makeAutoObservable, observable, toJS } from "mobx";
+import type { GameContext } from "../statemachine";
+import { Stage } from "../statemachine/stage";
 
 export enum Vote {
     POSITIVE,
@@ -28,9 +30,26 @@ export interface ITask {
 export type TaskDTO = ReturnType<TaskPoll["toJSON"]>;
 
 export class TaskPoll implements ISerializable {
-    constructor(private room: Room) {}
-
     history: Array<ITask> = [];
+
+    constructor(public context: GameContext) {
+        makeAutoObservable(this, {
+            context: false,
+            room: false,
+        });
+        autorun(() => {
+            this.context.boradcast.emit("taskChange", this.toJSON());
+        });
+        autorun(() => {
+            if (this.context.currentStage === Stage.WAITING) {
+                this.startWaiting();
+            }
+        });
+    }
+
+    get room() {
+        return this.context.room;
+    }
 
     get currentRound(): ITask | null {
         return this.history[this.history.length - 1] ?? null;
@@ -54,7 +73,6 @@ export class TaskPoll implements ISerializable {
                     (vote) => vote.vote === Vote.POSITIVE
                 ).length;
                 const result = positiveCount > this.room.count / 2;
-                this.currentRound.elections.result = result;
                 return { type: "DONE", votes, result } as const;
             }
         } else {
@@ -115,16 +133,12 @@ export class TaskPoll implements ISerializable {
         this.history = [];
     };
 
-    startGame = () => {
-        this.history = [];
-    };
-
     toJSON = () => {
         return {
-            history: this.history,
-            currentRound: this.currentRound,
-            currentElectionStage: this.currentElectionStage,
-            currentPollingStage: this.currentPollingStage,
+            history: toJS(this.history),
+            currentRound: toJS(this.currentRound),
+            currentElectionStage: toJS(this.currentElectionStage),
+            currentPollingStage: toJS(this.currentPollingStage),
         };
     };
 }
