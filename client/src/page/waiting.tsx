@@ -40,13 +40,21 @@ export const WaitingRoom = () => {
                 </Observer>
             </Layout.Content>
             <Layout.Footer>
-                <Button
-                    type="primary"
-                    style={{ width: "100%" }}
-                    onClick={handleStart}
-                >
-                    Start
-                </Button>
+                <Observer>
+                    {() => (
+                        <Button
+                            disabled={
+                                roomStore.room.count < 6 ||
+                                roomStore.room.count > 10
+                            }
+                            type="primary"
+                            style={{ width: "100%" }}
+                            onClick={handleStart}
+                        >
+                            Start
+                        </Button>
+                    )}
+                </Observer>
             </Layout.Footer>
         </Layout>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Form, Select } from "antd";
+import { Modal, Form, Select, message } from "antd";
 import { observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { useSocketClient } from "../lib/socket";
@@ -15,9 +15,13 @@ export const StartNewElection = observer((props: IProps) => {
 
     const handleSubmit = React.useCallback(async () => {
         const { players } = await form.validateFields();
-        socketClinet.socket.emit("startNewElection", players);
-        props.onClose();
-        form.resetFields(["players"]);
+        if (players.length) {
+            socketClinet.socket.emit("startNewElection", players);
+            props.onClose();
+            form.resetFields(["players"]);
+        } else {
+            message.error("选择为空");
+        }
     }, []);
 
     return (

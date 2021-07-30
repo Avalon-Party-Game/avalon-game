@@ -41,11 +41,7 @@ export class Room implements ISerializable {
 
     joinPlayer = (name: string, socket: Socket) => {
         const existingPlayer = this.players.find((player) => {
-            return (
-                player.name === name ||
-                player.socket.request.headers.cookie ===
-                    socket.request.headers.cookie
-            );
+            return player.name === name;
         });
         if (existingPlayer) {
             console.log("replacing player: " + name);
