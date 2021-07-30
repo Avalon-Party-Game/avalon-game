@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { makePersistable } from "mobx-persist-store";
+import { PlayerDTO } from "../../../server/src/room/player";
 
 interface IUserInfo {
     name: string;
@@ -8,6 +9,7 @@ interface IUserInfo {
 
 class UserStore {
     userInfo: IUserInfo | null = null;
+    playerInfo: PlayerDTO | null = null;
 
     constructor() {
         makeAutoObservable(this);
@@ -20,6 +22,10 @@ class UserStore {
 
     updateUserInfo = (userInfo: IUserInfo) => {
         this.userInfo = userInfo;
+    };
+
+    updatePlayerInfo = (playerInfo: PlayerDTO) => {
+        this.playerInfo = playerInfo;
     };
 }
 

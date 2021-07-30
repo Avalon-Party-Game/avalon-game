@@ -1,5 +1,5 @@
 import type { Room } from "../room";
-import type { Player } from "../room/player";
+import type { PlayerDTO } from "../room/player";
 import type { Character } from "./base";
 
 export class Percival implements Character {
@@ -9,18 +9,21 @@ export class Percival implements Character {
 
     constructor(private room: Room) {}
 
-    get visible(): Player[] {
-        return this.room.players.filter(
-            ({ role }) => role?.type === "MERLIN" || role?.type === "MORGANA"
-        );
+    get visible(): PlayerDTO[] {
+        return this.room.players
+            .filter(
+                ({ role }) =>
+                    role?.type === "MERLIN" || role?.type === "MORGANA"
+            )
+            .map(({ name }) => ({ name }));
     }
 
-    toJSON() {
+    toJSON = () => {
         return {
             type: this.type,
             name: this.name,
             side: this.side,
             visible: this.visible,
         };
-    }
+    };
 }

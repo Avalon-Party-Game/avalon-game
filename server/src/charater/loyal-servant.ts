@@ -1,5 +1,5 @@
 import type { Room } from "../room";
-import type { Player } from "../room/player";
+import type { PlayerDTO } from "../room/player";
 import type { Character } from "./base";
 
 export class LoyalServant implements Character {
@@ -9,11 +9,11 @@ export class LoyalServant implements Character {
 
     constructor(private room: Room) {}
 
-    get visible(): Player[] {
+    get visible(): PlayerDTO[] {
         return [];
     }
 
-    toJSON() {
+    toJSON = () => {
         return {
             type: this.type,
             name: this.name,

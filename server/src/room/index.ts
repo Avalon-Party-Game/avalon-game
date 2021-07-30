@@ -1,5 +1,6 @@
 import { LoyalServant } from "../charater/loyal-servant";
 import { Player } from "./player";
+import { RolePicker, roleTable } from "../charater/utils";
 import type { ISerializable } from "../charater/base";
 import type { PlayerDTO } from "./player";
 import type { Server, Socket } from "socket.io";
@@ -10,6 +11,7 @@ export interface RoomDTO {
 }
 
 export class Room implements ISerializable {
+    private rolePicker = new RolePicker(this);
     players: Player[] = [];
 
     get count() {
@@ -19,13 +21,22 @@ export class Room implements ISerializable {
     constructor(private io: Server) {}
 
     startWaiting = () => {
+        this.rolePicker.reset();
         this.players = this.players.filter((player) => player.socket.connected);
     };
 
     startGame = () => {
-        this.players.forEach(
-            (player) => (player.role = new LoyalServant(this))
-        );
+        this.rolePicker.reset();
+        this.players.forEach((player) => {
+            const role = this.rolePicker.pick();
+            if (role) {
+                const RoleConstructor = roleTable[role];
+                player.role = new RoleConstructor(this);
+            }
+        });
+        this.players.forEach((player) => {
+            player.socket.emit("playerChange", player);
+        });
     };
 
     joinPlayer = (name: string, socket: Socket) => {
@@ -44,8 +55,11 @@ export class Room implements ISerializable {
             existingPlayer.socket = socket;
             existingPlayer.name = name;
             socket.emit("replace", { message: "NAME_EXIST" });
+            return existingPlayer;
         } else {
-            this.players.push(new Player(socket, name));
+            const player = new Player(socket, name);
+            this.players.push(player);
+            return player;
         }
     };
 
@@ -56,6 +70,7 @@ export class Room implements ISerializable {
             }
         });
         this.players = [];
+        this.rolePicker.reset();
     };
 
     toJSON: () => RoomDTO = () => {

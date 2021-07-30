@@ -1,4 +1,4 @@
-import type { Player } from "../room/player";
+import type { PlayerDTO } from "../room/player";
 
 export interface ISerializable {
     toJSON(): any;
@@ -6,7 +6,15 @@ export interface ISerializable {
 
 export interface Character extends ISerializable {
     side: "JUSTICE" | "VILLAIN";
-    type: "LOYAL_SERVANT" | "MERLIN" | "PERCIVAL" | "MORGANA";
+    type:
+        | "MERLIN"
+        | "PERCIVAL"
+        | "MORGANA"
+        | "ASSASIN"
+        | "LOYAL_SERVANT"
+        | "OBERON"
+        | "MODRED"
+        | "MINIONS";
     name: string;
-    visible: Player[];
+    visible: PlayerDTO[];
 }

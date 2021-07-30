@@ -4,6 +4,7 @@ import type { Character, ISerializable } from "../charater/base";
 export interface PlayerDTO {
     name: string;
     role?: Character;
+    roleName?: string;
 }
 
 export class Player implements ISerializable {

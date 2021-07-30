@@ -16,13 +16,17 @@ export interface ITask {
     elections: {
         players: string[];
         votes: IVote[];
+        result?: boolean;
     };
 
     // players who can execute task vote for task
     poll: {
         votes: IVote[];
+        result?: boolean;
     };
 }
+
+export type TaskDTO = ReturnType<TaskPoll["toJSON"]>;
 
 export class TaskPoll implements ISerializable {
     constructor(private room: Room) {}
@@ -30,7 +34,7 @@ export class TaskPoll implements ISerializable {
     history: Array<ITask> = [];
 
     get currentRound(): ITask | null {
-        return this.history[this.history.length] ?? null;
+        return this.history[this.history.length - 1] ?? null;
     }
 
     get currentElectionStage() {
@@ -51,6 +55,7 @@ export class TaskPoll implements ISerializable {
                     (vote) => vote.vote === Vote.POSITIVE
                 ).length;
                 const result = positiveCount > this.room.count / 2;
+                this.currentRound.elections.result = result;
                 return { type: "DONE", votes, result } as const;
             }
         } else {
@@ -85,6 +90,7 @@ export class TaskPoll implements ISerializable {
                     positiveCount >
                     this.currentRound.elections.players.length / 2;
 
+                this.currentRound.poll.result = result;
                 return { type: "DONE", votes, result } as const;
             }
         } else {
@@ -94,22 +100,26 @@ export class TaskPoll implements ISerializable {
 
     voteForPlayersFrom = (player: string, vote: Vote) => {
         this.currentRound?.elections.votes.push({ player, vote });
-    }
+    };
 
     voteForTaskFrom = (player: string, vote: Vote) => {
         this.currentRound?.poll.votes.push({ player, vote });
-    }
+    };
 
     startNewElection = (players: string[]) => {
         this.history.push({
             elections: { players, votes: [] },
             poll: { votes: [] },
         });
-    }
+    };
+
+    startWaiting = () => {
+        this.history = [];
+    };
 
     startGame = () => {
         this.history = [];
-    }
+    };
 
     toJSON = () => {
         return {
@@ -118,5 +128,5 @@ export class TaskPoll implements ISerializable {
             currentElectionStage: this.currentElectionStage,
             currentPollingStage: this.currentPollingStage,
         };
-    }
+    };
 }

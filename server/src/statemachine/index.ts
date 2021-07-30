@@ -21,17 +21,21 @@ export class GameState {
         if (!name || name === "" || typeof name !== "string") {
             socket.disconnect(true);
         } else {
-            this.room.joinPlayer(name, socket);
+            const player = this.room.joinPlayer(name, socket);
             this.boradcast.emit("roomChange", this.room);
             socket.emit("stageChange", this.currentStage);
             socket.emit("taskChange", this.taskPoll);
+            socket.emit("playerChange", player);
         }
     };
 
     startWaiting = () => {
         this.currentStage = Stage.WAITING;
         this.room.startWaiting();
+        this.taskPoll.startWaiting();
         this.boradcast.emit("stageChange", this.currentStage);
+        this.boradcast.emit("roomChange", this.room);
+        this.boradcast.emit("taskChange", this.taskPoll);
     };
 
     startGame = () => {
@@ -47,6 +51,7 @@ export class GameState {
         this.currentStage = Stage.ELECTION;
         this.taskPoll.startNewElection(playersName);
         this.boradcast.emit("stageChange", this.currentStage);
+        this.boradcast.emit("taskChange", this.taskPoll);
     };
 
     voteForPlayersFrom = (playerName: string, vote: Vote) => {

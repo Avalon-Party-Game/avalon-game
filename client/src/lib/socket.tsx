@@ -6,6 +6,13 @@ import { userStore } from "../store/user";
 import type { Socket } from "socket.io-client";
 import type { RoomDTO } from "../../../server/src/room";
 import type { Stage } from "../../../server/src/statemachine/stage";
+import type { PlayerDTO } from "../../../server/src/room/player";
+import type { TaskDTO } from "../../../server/src/task";
+import { taskStore } from "../store/task";
+
+const ws = import.meta.env.DEV
+    ? "ws://localhost:3100"
+    : `ws://${window.location.host}`;
 
 export class SocketClient {
     private static _instance: SocketClient;
@@ -13,7 +20,7 @@ export class SocketClient {
     public static get instance() {
         if (!this._instance) {
             this._instance = new SocketClient(
-                io("ws://localhost:3100", {
+                io(ws, {
                     autoConnect: false,
                     transports: ["websocket"],
                 })
@@ -31,6 +38,16 @@ export class SocketClient {
         this.socket.on("stageChange", (stage: Stage) => {
             console.log("stageChange", stage);
             roomStore.updateStage(stage);
+        });
+
+        this.socket.on("playerChange", (player: PlayerDTO) => {
+            console.log("playerChange", player);
+            userStore.updatePlayerInfo(player);
+        });
+
+        this.socket.on("taskChange", (taskPoll: TaskDTO) => {
+            console.log("taskChange", taskPoll);
+            taskStore.updateTaskPoll(taskPoll);
         });
 
         autorun(() => {
