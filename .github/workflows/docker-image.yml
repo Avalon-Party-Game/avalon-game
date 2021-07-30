@@ -14,5 +14,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Login Docker
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag hlhr202/avalon:$(date +%s)
+      
+    - name: Push Docker image
+      run: docker push hlhr202/avalon:$(date +%s)
