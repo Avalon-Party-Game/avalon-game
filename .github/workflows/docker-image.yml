@@ -26,4 +26,4 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: hlhr202/avalon:$(date +%s)
+        tags: hlhr202/avalon:latest
