@@ -6,8 +6,5 @@
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview"
-  },
-  "dependencies": {
-    "mobx-persist-store": "^1.0.3"
   }
 }
