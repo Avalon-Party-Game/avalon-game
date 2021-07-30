@@ -1,6 +1,11 @@
 import type { Socket } from "socket.io";
 import type { Character, ISerializable } from "../charater/base";
 
+export interface PlayerDTO {
+    name: string;
+    role?: Character;
+}
+
 export class Player implements ISerializable {
     constructor(
         public socket: Socket,
@@ -8,10 +13,10 @@ export class Player implements ISerializable {
         public role?: Character
     ) {}
 
-    toJSON() {
+    toJSON(): PlayerDTO {
         return {
             name: this.name,
-            role: this.role ?? null,
+            role: this.role,
         };
     }
 }

@@ -1,8 +1,8 @@
-import "antd/dist/antd.dark.css";
 import React from "react";
 import ReactDOM from "react-dom";
-import { SocketClient, SocketClientContext } from "./lib/socket";
 import { Routes } from "./router";
+import { SocketClient, SocketClientContext } from "./lib/socket";
+import "antd/dist/antd.dark.css";
 
 ReactDOM.render(
     <React.StrictMode>

@@ -1,37 +1,23 @@
 import { Server } from "socket.io";
-import { Player } from "./room/player";
-import { room } from "./room";
+import { GameState } from "./statemachine";
+import { createServer } from "http";
 
-const io = new Server();
+const httpServer = createServer();
+const io = new Server(httpServer, {
+    cors: { origin: true, methods: ["GET", "POST"] },
+});
+const gameState = new GameState(io);
 
 io.on("connection", (socket) => {
-    socket.join("avalon");
     const { name } = socket.handshake.query;
-    console.log("joining: " + name?.toString());
-
-    if (!name || name === "" || typeof name !== "string") {
-        socket.disconnect(true);
-    } else {
-        const existingPlayer = room.players.find(
-            (player) => player.name === name
-        );
-        if (existingPlayer) {
-            console.log("replacing player: " + name);
-            if (existingPlayer.socket.connected) {
-                existingPlayer.socket.disconnect();
-            }
-            existingPlayer.socket = socket;
-            socket.emit("replace", { message: "NAME_EXIST" });
-        } else {
-            room.players.push(new Player(socket, name));
-        }
-        io.to("avalon").emit("roomChange", JSON.stringify(room));
-    }
-
-    socket.on("startGame", () => {
-        room.startGame();
-        io.to("avalon").emit("roomChange", JSON.stringify(room));
-    });
+    console.log("new connection: " + name?.toString());
+    socket.join("avalon");
+    gameState.joinPlayer(name, socket);
+    socket.on("startWaiting", gameState.startWaiting);
+    socket.on("startGame", gameState.startGame);
+    socket.on("startNewElection", gameState.startNewElection);
 });
 
-io.listen(3100);
+httpServer.listen(3100, () => {
+    gameState.startWaiting();
+});
