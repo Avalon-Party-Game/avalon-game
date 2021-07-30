@@ -82,24 +82,9 @@ export const TaskHistory = observer(() => {
                                     ) : (
                                         task.elections.result && (
                                             <Space>
+                                                <div>任务结果：</div>
                                                 <div>
-                                                    任务结果：
-                                                    {task.poll.result
-                                                        ? "成功"
-                                                        : "失败"}
-                                                </div>
-                                                <div>
-                                                    ✅:
-                                                    {
-                                                        task.poll.votes.filter(
-                                                            (vote) =>
-                                                                vote.vote ===
-                                                                Vote.POSITIVE
-                                                        ).length
-                                                    }
-                                                </div>
-                                                <div>
-                                                    ❎:
+                                                    有
                                                     {
                                                         task.poll.votes.filter(
                                                             (vote) =>
@@ -107,6 +92,7 @@ export const TaskHistory = observer(() => {
                                                                 Vote.NEGATIVE
                                                         ).length
                                                     }
+                                                    人破坏
                                                 </div>
                                             </Space>
                                         )

@@ -52,7 +52,9 @@ export const InGame = observer(() => {
                         })()}
                     </h1>
                 </Layout.Header>
-                <Layout.Content style={{ overflow: "auto", paddingBottom: '40px' }}>
+                <Layout.Content
+                    style={{ overflow: "auto", paddingBottom: "40px" }}
+                >
                     <Collapse defaultActiveKey={["1", "2", "3"]} ghost>
                         <Collapse.Panel header="展示/隐藏 玩家信息" key="1">
                             <Card
@@ -60,21 +62,22 @@ export const InGame = observer(() => {
                                 title={`${userStore.playerInfo?.name} - 你扮演的角色：${userStore.playerInfo?.role?.name}`}
                             >
                                 <div>你视野中的人</div>
-                                <List
-                                    dataSource={
-                                        userStore.playerInfo?.role?.visible
-                                    }
-                                    renderItem={(player) => (
-                                        <List.Item>
-                                            <Card
-                                                size="small"
-                                                title={player.name}
-                                            >
-                                                {player.roleName ?? "未知角色"}
-                                            </Card>
-                                        </List.Item>
+                                <Row gutter={12} style={{ paddingTop: "10px" }}>
+                                    {userStore.playerInfo?.role?.visible.map(
+                                        (player) => (
+                                            <Col span={4}>
+                                                <Card
+                                                    size="small"
+                                                    title={player.name}
+                                                    key={player.name}
+                                                >
+                                                    {player.roleName ??
+                                                        "未知角色"}
+                                                </Card>
+                                            </Col>
+                                        )
                                     )}
-                                />
+                                </Row>
                             </Card>
                         </Collapse.Panel>
                         <Collapse.Panel header="投票区" key="2">

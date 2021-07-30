@@ -22,7 +22,6 @@ export interface ITask {
     // players who can execute task vote for task
     poll: {
         votes: IVote[];
-        result?: boolean;
     };
 }
 
@@ -90,7 +89,6 @@ export class TaskPoll implements ISerializable {
                     positiveCount >
                     this.currentRound.elections.players.length / 2;
 
-                this.currentRound.poll.result = result;
                 return { type: "DONE", votes, result } as const;
             }
         } else {
