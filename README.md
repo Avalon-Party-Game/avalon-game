@@ -36,5 +36,5 @@ docker run -d -p 3100:3100 avalon
 
 ```bash
 docker pull hlhr202/avalon:latest
-docker run -d -p 3100:3100 avalon
+docker run -d -p 3100:3100 hlhr202/avalon
 ```
