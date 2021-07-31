@@ -2,7 +2,7 @@ import React from "react";
 import { Card, List, Space } from "antd";
 import { toJS } from "mobx";
 import { taskStore } from "../store/task";
-import { observer, Observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { ITask, Vote } from "../../../server/src/task";
 import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/statemachine/stage";
@@ -50,7 +50,7 @@ const TaskRecord = observer(({ task, index }: { task: ITask; index: number }) =>
     (roomStore.stage === Stage.POLLING || roomStore.stage === Stage.ELECTION) &&
     index === 0 ? (
         <div>等待任务结果...</div>
-    ) : task.elections.result ? (
+    ) : task.poll ? (
         <Space>
             <div>任务结果：</div>
             <div>
@@ -73,19 +73,17 @@ export const TaskHistory = observer(() => {
                 dataSource={Array.from(
                     toJS(taskStore.taskPoll)?.history ?? []
                 ).reverse()}
-                renderItem={(task, index) => {
-                    return (
-                        <List.Item
-                            style={{
-                                flexDirection: "column",
-                                alignItems: "flex-start",
-                            }}
-                        >
-                            <ElectionRecord task={task} index={index} />
-                            <TaskRecord task={task} index={index} />
-                        </List.Item>
-                    );
-                }}
+                renderItem={(task, index) => (
+                    <List.Item
+                        style={{
+                            flexDirection: "column",
+                            alignItems: "flex-start",
+                        }}
+                    >
+                        <ElectionRecord task={task} index={index} />
+                        <TaskRecord task={task} index={index} />
+                    </List.Item>
+                )}
             ></List>
         </Card>
     );

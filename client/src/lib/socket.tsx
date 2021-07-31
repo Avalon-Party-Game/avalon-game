@@ -44,7 +44,7 @@ export class SocketClient {
 
         this.socket.on("playerChange", (player: PlayerDTO) => {
             console.log("playerChange", player);
-            userStore.updatePlayerInfo(player);
+            roomStore.updatePlayerInfo(player);
         });
 
         this.socket.on("taskChange", (taskPoll: TaskDTO) => {

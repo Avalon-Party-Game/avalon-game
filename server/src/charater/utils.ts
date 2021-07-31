@@ -5,7 +5,6 @@ import { Modred } from "./modred";
 import { Morgana } from "./morgana";
 import { Oberon } from "./oberon";
 import { Percival } from "./percival";
-import type { Room } from "../room";
 import type { Character } from "./base";
 import { Minions } from "./minions";
 

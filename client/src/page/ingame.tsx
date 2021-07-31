@@ -26,7 +26,7 @@ export const InGame = observer(() => {
                     history.push(`/waiting/${userStore.userInfo.room}`);
                 }
             }),
-        []
+        [history]
     );
     const handleEndGame = React.useCallback(() => {
         socketClient.socket.emit("startWaiting");
@@ -61,11 +61,11 @@ export const InGame = observer(() => {
                         <Collapse.Panel header="展示/隐藏 玩家信息" key="1">
                             <Card
                                 size="small"
-                                title={`${userStore.playerInfo?.name} - 你扮演的角色：${userStore.playerInfo?.role?.name}`}
+                                title={`${roomStore.playerInfo?.name} - 你扮演的角色：${roomStore.playerInfo?.role?.name}`}
                             >
                                 <div>你视野中的人</div>
                                 <Space>
-                                    {userStore.playerInfo?.role?.visible.map(
+                                    {roomStore.playerInfo?.role?.visible.map(
                                         (player) => (
                                             <div
                                                 key={player.name}

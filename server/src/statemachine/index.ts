@@ -2,7 +2,7 @@ import { TaskPoll, Vote } from "../task";
 import { Room } from "../room";
 import { Stage } from "./stage";
 import type { Server, Socket } from "socket.io";
-import { autorun, makeAutoObservable, observable } from "mobx";
+import { autorun, makeAutoObservable } from "mobx";
 
 export class GameContext {
     public currentStage = Stage.WAITING;

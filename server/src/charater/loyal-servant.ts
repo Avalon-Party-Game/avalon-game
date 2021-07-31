@@ -20,5 +20,5 @@ export class LoyalServant implements Character {
             side: this.side,
             visible: this.visible,
         };
-    }
+    };
 }

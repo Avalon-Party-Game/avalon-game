@@ -4,7 +4,7 @@ import type { ISerializable } from "../charater/base";
 import type { PlayerDTO } from "./player";
 import type { Socket } from "socket.io";
 import type { GameContext } from "../statemachine";
-import { autorun, makeAutoObservable, observable, reaction, toJS } from "mobx";
+import { autorun, makeAutoObservable, observable, toJS } from "mobx";
 import { Stage } from "../statemachine/stage";
 
 export interface RoomDTO {
@@ -26,7 +26,7 @@ export class Room implements ISerializable {
         });
 
         autorun(() => {
-            this.notify()
+            this.notify();
         });
 
         autorun(() => {

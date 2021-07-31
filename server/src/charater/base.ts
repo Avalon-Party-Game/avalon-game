@@ -1,7 +1,7 @@
 import type { PlayerDTO } from "../room/player";
 
 export interface ISerializable {
-    toJSON(): any;
+    toJSON(): unknown;
 }
 
 export interface Character extends ISerializable {

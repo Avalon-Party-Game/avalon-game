@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/statemachine/stage";
 import { taskStore } from "../store/task";
-import { userStore } from "../store/user";
 import { useSocketClient } from "../lib/socket";
 import { Vote } from "../../../server/src/task";
 
@@ -17,7 +16,7 @@ export const Election = observer(() => {
     const pendingOthers =
         taskStore.taskPoll?.currentElectionStage.type === "PENDING" &&
         !taskStore.taskPoll.currentElectionStage.pending.includes(
-            userStore.playerInfo?.name ?? ""
+            roomStore.playerInfo?.name ?? ""
         );
 
     const handleVote = React.useCallback(

@@ -1,5 +1,5 @@
 import type { ISerializable } from "../charater/base";
-import { autorun, makeAutoObservable, observable, toJS } from "mobx";
+import { autorun, makeAutoObservable, toJS } from "mobx";
 import type { GameContext } from "../statemachine";
 import { Stage } from "../statemachine/stage";
 

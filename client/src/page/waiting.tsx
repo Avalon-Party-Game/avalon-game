@@ -16,15 +16,18 @@ export const WaitingRoom = () => {
 
     const handleStart = React.useCallback(() => {
         socketClient.socket.emit("startGame");
-    }, []);
+    }, [socketClient.socket]);
 
-    const handleKickPlayer = React.useCallback((playerName: string) => {
-        socketClient.socket.emit("kickPlayer", playerName);
-    }, []);
+    const handleKickPlayer = React.useCallback(
+        (playerName: string) => {
+            socketClient.socket.emit("kickPlayer", playerName);
+        },
+        [socketClient.socket]
+    );
 
     const handleKickOffline = React.useCallback(() => {
         socketClient.socket.emit("kickOffline");
-    }, []);
+    }, [socketClient.socket]);
 
     React.useEffect(() => {
         return autorun(() => {
@@ -35,7 +38,7 @@ export const WaitingRoom = () => {
                 history.push("/in-game");
             }
         });
-    }, []);
+    }, [history]);
 
     return (
         <Layout style={{ height: "100vh" }}>

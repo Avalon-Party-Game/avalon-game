@@ -1,11 +1,10 @@
 import React from "react";
 import { reaction } from "mobx";
-import { Button, Card, Col, message, Row, Space } from "antd";
+import { Button, Card, Col, message, Row } from "antd";
 import { observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/statemachine/stage";
 import { taskStore } from "../store/task";
-import { userStore } from "../store/user";
 import { useSocketClient } from "../lib/socket";
 import { Vote } from "../../../server/src/task";
 
@@ -16,14 +15,14 @@ export const Polling = observer(() => {
 
     const currentRoundIncludesMe =
         taskStore.taskPoll?.currentRound?.elections.players.includes(
-            userStore.playerInfo?.name ?? ""
+            roomStore.playerInfo?.name ?? ""
         );
 
     const myPollingHasBeenPlaced =
         currentRoundIncludesMe &&
         taskStore.taskPoll?.currentPollingStage.type === "PENDING" &&
         !taskStore.taskPoll.currentPollingStage.pending.includes(
-            userStore.playerInfo?.name ?? ""
+            roomStore.playerInfo?.name ?? ""
         );
 
     const pendingOthers = currentRoundIncludesMe

@@ -22,7 +22,7 @@ export const StartNewElection = observer((props: IProps) => {
         } else {
             message.error("选择为空");
         }
-    }, []);
+    }, [form, props, socketClinet.socket]);
 
     return (
         <Modal
