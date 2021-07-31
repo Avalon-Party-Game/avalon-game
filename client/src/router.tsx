@@ -1,13 +1,13 @@
 import React from "react";
-import { Redirect, Route, Router, Switch } from "react-router-dom";
+import { autorun } from "mobx";
 import { createBrowserHistory } from "history";
 import { InGame } from "./page/ingame";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
+import { roomStore } from "./store/room";
+import { Stage } from "../../server/src/state/stage";
+import { userStore } from "./store/user";
 import { WaitingRoom } from "./page/waiting";
 import { Welcome } from "./page/welcome";
-import { autorun } from "mobx";
-import { roomStore } from "./store/room";
-import { userStore } from "./store/user";
-import { Stage } from "../../server/src/statemachine/stage";
 
 export const history = createBrowserHistory();
 

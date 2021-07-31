@@ -1,16 +1,19 @@
 import React from "react";
-import { Button, Layout, Card, Collapse, Row, Col, Space } from "antd";
 import { autorun } from "mobx";
-import { observer } from "mobx-react";
-import { roomStore } from "../store/room";
-import { userStore } from "../store/user";
-import { Stage } from "../../../server/src/statemachine/stage";
-import { useHistory } from "react-router";
-import { StartNewElection } from "../components/start-new-election";
+import { Button, Card, Col, Collapse, Layout, Row, Space } from "antd";
 import { Election } from "../components/election";
-import { useSocketClient } from "../lib/socket";
+import { observer } from "mobx-react";
 import { Polling } from "../components/polling";
+import { roomStore } from "../store/room";
+import { Stage } from "../../../server/src/state/stage";
+import { StartNewElection } from "../components/start-new-election";
 import { TaskHistory } from "../components/history";
+import { useHistory } from "react-router";
+import { userStore } from "../store/user";
+import { useSocketClient } from "../lib/socket";
+import { Header } from "../components/layout/header";
+import { GameLayout } from "../components/layout/layout";
+import { Footer } from "../components/layout/footer";
 
 export const InGame = observer(() => {
     const socketClient = useSocketClient();
@@ -37,9 +40,10 @@ export const InGame = observer(() => {
                 visible={showElection}
                 onClose={() => setShowElection(false)}
             />
-            <Layout style={{ height: "100vh" }}>
-                <Layout.Header>
-                    <h1>
+            <GameLayout>
+                <Header>
+                    <div>
+                        <span>阿瓦隆 - </span>
                         {(() => {
                             switch (roomStore.stage) {
                                 case Stage.STARTED:
@@ -47,13 +51,13 @@ export const InGame = observer(() => {
                                 case Stage.ONGOING:
                                     return "游戏继续";
                                 case Stage.ELECTION:
-                                    return "投票选出执行任务的人";
+                                    return "投票车队";
                                 case Stage.POLLING:
-                                    return "投票任务成功或失败";
+                                    return "投票任务";
                             }
                         })()}
-                    </h1>
-                </Layout.Header>
+                    </div>
+                </Header>
                 <Layout.Content
                     style={{ overflow: "auto", paddingBottom: "40px" }}
                 >
@@ -75,14 +79,6 @@ export const InGame = observer(() => {
                                                 <div>
                                                     {player.roleName ?? "未知"}
                                                 </div>
-                                                {/* <Card
-                                                    size="small"
-                                                    title={player.name}
-                                                    key={player.name}
-                                                >
-                                                    {player.roleName ??
-                                                        "未知角色"}
-                                                </Card> */}
                                             </div>
                                         )
                                     )}
@@ -90,15 +86,27 @@ export const InGame = observer(() => {
                             </Card>
                         </Collapse.Panel>
                         <Collapse.Panel header="投票区" key="2">
-                            <Election />
-                            <Polling />
+                            {(() => {
+                                switch (roomStore.stage) {
+                                    case Stage.ELECTION:
+                                        return <Election />;
+                                    case Stage.POLLING:
+                                        return <Polling />;
+                                    default:
+                                        return (
+                                            <Card size="small">
+                                                没有投票项目
+                                            </Card>
+                                        );
+                                }
+                            })()}
                         </Collapse.Panel>
                         <Collapse.Panel header="历史记录" key="3">
                             <TaskHistory />
                         </Collapse.Panel>
                     </Collapse>
                 </Layout.Content>
-                <Layout.Footer>
+                <Footer>
                     <Row gutter={6}>
                         <Col span={12}>
                             <Button
@@ -123,8 +131,8 @@ export const InGame = observer(() => {
                             </Button>
                         </Col>
                     </Row>
-                </Layout.Footer>
-            </Layout>
+                </Footer>
+            </GameLayout>
         </>
     );
 });

@@ -8,7 +8,7 @@ import { taskStore } from "../store/task";
 import { userStore } from "../store/user";
 import type { Socket } from "socket.io-client";
 import type { RoomDTO } from "../../../server/src/room";
-import type { Stage } from "../../../server/src/statemachine/stage";
+import type { Stage } from "../../../server/src/state/stage";
 import type { PlayerDTO } from "../../../server/src/room/player";
 import type { TaskDTO } from "../../../server/src/task";
 

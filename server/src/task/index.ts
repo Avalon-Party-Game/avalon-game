@@ -1,7 +1,7 @@
-import type { ISerializable } from "../charater/base";
 import { autorun, makeAutoObservable, toJS } from "mobx";
-import type { GameContext } from "../statemachine";
-import { Stage } from "../statemachine/stage";
+import { Stage } from "../state/stage";
+import type { ISerializable } from "../charater/base";
+import type { GameContext } from "../state";
 
 export enum Vote {
     POSITIVE,
@@ -41,8 +41,22 @@ export class TaskPoll implements ISerializable {
             this.context.boradcast.emit("taskChange", this.toJSON());
         });
         autorun(() => {
-            if (this.context.currentStage === Stage.WAITING) {
-                this.startWaiting();
+            if (this.context.state.stage === Stage.STARTED) {
+                this.startGame();
+            }
+        });
+        autorun(() => {
+            if (this.currentElectionStage.type === "DONE") {
+                if (this.currentElectionStage.result) {
+                    this.context.state.updateStage(Stage.POLLING);
+                } else {
+                    this.context.state.updateStage(Stage.ONGOING);
+                }
+            }
+        });
+        autorun(() => {
+            if (this.currentPollingStage.type === "DONE") {
+                this.context.state.updateStage(Stage.ONGOING);
             }
         });
     }
@@ -123,13 +137,14 @@ export class TaskPoll implements ISerializable {
     };
 
     startNewElection = (players: string[]) => {
+        this.context.state.updateStage(Stage.ELECTION);
         this.history.push({
             elections: { players, votes: [] },
             poll: { votes: [] },
         });
     };
 
-    startWaiting = () => {
+    startGame = () => {
         this.history = [];
     };
 

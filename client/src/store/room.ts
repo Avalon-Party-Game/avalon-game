@@ -1,7 +1,7 @@
-import type { RoomDTO } from "../../../server/src/room";
 import { makeAutoObservable } from "mobx";
-import { Stage } from "../../../server/src/statemachine/stage";
-import { PlayerDTO } from "../../../server/src/room/player";
+import { Stage } from "../../../server/src/state/stage";
+import type { RoomDTO } from "../../../server/src/room";
+import type { PlayerDTO } from "../../../server/src/room/player";
 
 class RoomStore {
     stage: Stage = Stage.WAITING;

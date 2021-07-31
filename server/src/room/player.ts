@@ -1,5 +1,7 @@
+import { autorun, makeAutoObservable, toJS } from "mobx";
 import type { Socket } from "socket.io";
 import type { Character, ISerializable } from "../charater/base";
+import type { GameContext } from "../state";
 
 export interface PlayerDTO {
     name: string;
@@ -10,16 +12,33 @@ export interface PlayerDTO {
 
 export class Player implements ISerializable {
     constructor(
-        public socket: Socket,
+        public context: GameContext,
         public name: string,
+        public socket: Socket,
         public role?: Character
-    ) {}
+    ) {
+        makeAutoObservable(this, { socket: false, toJSON: false });
+        this.notify();
+    }
 
-    toJSON(): PlayerDTO {
+    replace = (name: string, socket: Socket) => {
+        this.name = name;
+        this.socket = socket;
+        this.notify();
+    };
+
+    notify = () => {
+        this.socket.emit("playerChange", this.toJSON());
+        this.socket.emit("roomChange", this.context.room.toJSON());
+        this.socket.emit("stageChange", this.context.state.stage);
+        this.socket.emit("taskChange", this.context.taskPoll.toJSON());
+    };
+
+    toJSON: () => PlayerDTO = () => {
         return {
-            name: this.name,
-            role: this.role,
+            name: toJS(this.name),
+            role: toJS(this.role),
             connected: this.socket.connected,
         };
-    }
+    };
 }

@@ -1,14 +1,17 @@
+import DisconnectOutlined from "@ant-design/icons/DisconnectOutlined";
 import React from "react";
 import UserDeleteOutlined from "@ant-design/icons/UserDeleteOutlined";
+import WifiOutlined from "@ant-design/icons/WifiOutlined";
 import { autorun, toJS } from "mobx";
-import { Button, Layout, List, Row, Col } from "antd";
+import { Button, Col, Layout, List, Row } from "antd";
 import { Observer } from "mobx-react";
 import { roomStore } from "../store/room";
-import { Stage } from "../../../server/src/statemachine/stage";
+import { Stage } from "../../../server/src/state/stage";
 import { useHistory } from "react-router";
 import { useSocketClient } from "../lib/socket";
-import WifiOutlined from "@ant-design/icons/WifiOutlined";
-import DisconnectOutlined from "@ant-design/icons/DisconnectOutlined";
+import { Header } from "../components/layout/header";
+import { GameLayout } from "../components/layout/layout";
+import { Footer } from "../components/layout/footer";
 
 export const WaitingRoom = () => {
     const history = useHistory();
@@ -41,10 +44,10 @@ export const WaitingRoom = () => {
     }, [history]);
 
     return (
-        <Layout style={{ height: "100vh" }}>
-            <Layout.Header>
-                <h1>等待中...</h1>
-            </Layout.Header>
+        <GameLayout>
+            <Header>
+                <div>等待中...</div>
+            </Header>
             <Layout.Content style={{ padding: "30px" }}>
                 <Observer>
                     {() => (
@@ -81,7 +84,7 @@ export const WaitingRoom = () => {
                     )}
                 </Observer>
             </Layout.Content>
-            <Layout.Footer>
+            <Footer>
                 <Row gutter={12}>
                     <Col span={12}>
                         <Button block onClick={handleKickOffline}>
@@ -103,7 +106,7 @@ export const WaitingRoom = () => {
                         </Observer>
                     </Col>
                 </Row>
-            </Layout.Footer>
-        </Layout>
+            </Footer>
+        </GameLayout>
     );
 };

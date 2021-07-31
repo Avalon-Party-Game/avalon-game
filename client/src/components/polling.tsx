@@ -3,7 +3,7 @@ import { reaction } from "mobx";
 import { Button, Card, Col, message, Row } from "antd";
 import { observer } from "mobx-react";
 import { roomStore } from "../store/room";
-import { Stage } from "../../../server/src/statemachine/stage";
+import { Stage } from "../../../server/src/state/stage";
 import { taskStore } from "../store/task";
 import { useSocketClient } from "../lib/socket";
 import { Vote } from "../../../server/src/task";

@@ -1,11 +1,11 @@
+import { autorun, makeAutoObservable, toJS } from "mobx";
 import { Player } from "./player";
 import { RolePicker, roleTable } from "../charater/utils";
+import { Stage } from "../state/stage";
 import type { ISerializable } from "../charater/base";
 import type { PlayerDTO } from "./player";
 import type { Socket } from "socket.io";
-import type { GameContext } from "../statemachine";
-import { autorun, makeAutoObservable, observable, toJS } from "mobx";
-import { Stage } from "../statemachine/stage";
+import type { GameContext } from "../state";
 
 export interface RoomDTO {
     players: PlayerDTO[];
@@ -22,7 +22,6 @@ export class Room implements ISerializable {
     constructor(public context: GameContext) {
         makeAutoObservable(this, {
             context: false,
-            players: observable.shallow,
         });
 
         autorun(() => {
@@ -30,7 +29,7 @@ export class Room implements ISerializable {
         });
 
         autorun(() => {
-            if (this.context.currentStage === Stage.STARTED) {
+            if (this.context.state.stage === Stage.STARTED) {
                 this.startGame();
             }
         });
@@ -59,39 +58,46 @@ export class Room implements ISerializable {
     };
 
     getExistingPlayer = (name: string) => {
-        return this.players.find((player) => {
-            return player.name === name;
-        });
+        return this.players.find((player) => player.name === name);
     };
 
     joinPlayer = (name: string, socket: Socket) => {
-        let player = this.getExistingPlayer(name);
-        if (player) {
-            console.log("replacing player: " + name);
-            if (player.socket.connected) {
-                player.socket.disconnect();
-            }
-            player.socket = socket;
-            player.name = name;
-            socket.emit("replace", { message: "NAME_EXIST" });
+        socket.join("avalon");
+        const externalPlayerJoining =
+            this.context.state.stage !== Stage.WAITING &&
+            !this.getExistingPlayer(name);
+
+        if (externalPlayerJoining) {
+            socket.emit("kick");
+            socket.disconnect(true);
         } else {
-            player = new Player(socket, name);
-            this.players.push(player);
+            let player = this.getExistingPlayer(name);
+            if (player) {
+                console.log("replacing player: " + name);
+                if (player.socket.connected) {
+                    player.socket.disconnect();
+                }
+                player.replace(name, socket);
+                socket.emit("replace", { message: "NAME_EXIST" });
+                this.notify();
+            } else {
+                player = new Player(this.context, name, socket);
+                this.players.push(player);
+            }
+            return player;
         }
-        this.notify();
-        return player;
     };
 
     kickPlayer = (name: string) => {
-        const existingPlayer = this.players.find(
-            (player) => player.name === name
-        );
+        const existingPlayer = this.getExistingPlayer(name);
         if (existingPlayer) {
             console.log("kicking player: " + name);
             existingPlayer.socket.emit("kick");
             existingPlayer.socket.disconnect(true);
+            this.players = this.players.filter(
+                (player) => player.name !== name
+            );
         }
-        this.players = this.players.filter((player) => player.name !== name);
     };
 
     toJSON: () => RoomDTO = () => {

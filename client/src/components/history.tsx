@@ -1,19 +1,23 @@
 import React from "react";
 import { Card, List, Space } from "antd";
-import { toJS } from "mobx";
-import { taskStore } from "../store/task";
 import { observer } from "mobx-react";
-import { ITask, Vote } from "../../../server/src/task";
 import { roomStore } from "../store/room";
-import { Stage } from "../../../server/src/statemachine/stage";
+import { Stage } from "../../../server/src/state/stage";
+import { taskStore } from "../store/task";
+import { toJS } from "mobx";
+import { Vote } from "../../../server/src/task";
+import type { ITask } from "../../../server/src/task";
 
 const ElectionRecord = observer(
     ({ task, index }: { task: ITask; index: number }) => {
         const pending = roomStore.stage === Stage.ELECTION && index === 0;
+
         const positiveCount = task.elections.votes.filter(
             (vote) => vote.vote === Vote.POSITIVE
         ).length;
+
         const result = positiveCount > roomStore.room.count / 2;
+
         return pending ? (
             <div>等待投票任务队伍结果...</div>
         ) : (
@@ -46,33 +50,46 @@ const ElectionRecord = observer(
     }
 );
 
-const TaskRecord = observer(({ task, index }: { task: ITask; index: number }) =>
-    (roomStore.stage === Stage.POLLING || roomStore.stage === Stage.ELECTION) &&
-    index === 0 ? (
-        <div>等待任务结果...</div>
-    ) : task.poll ? (
-        <Space>
-            <div>任务结果：</div>
-            <div>
-                有
-                {
-                    task.poll.votes.filter(
-                        (vote) => vote.vote === Vote.NEGATIVE
-                    ).length
-                }
-                人破坏
-            </div>
-        </Space>
-    ) : null
+const TaskRecord = observer(
+    ({ task, index }: { task: ITask; index: number }) => {
+        const waiting =
+            (roomStore.stage === Stage.POLLING ||
+                roomStore.stage === Stage.ELECTION) &&
+            index === 0;
+
+        const electionPositiveCount = task.elections.votes.filter(
+            (vote) => vote.vote === Vote.POSITIVE
+        ).length;
+
+        const electionResult = electionPositiveCount > roomStore.room.count / 2;
+
+        return waiting ? (
+            <div>等待任务结果...</div>
+        ) : electionResult && task.poll ? (
+            <Space>
+                <div>任务结果：</div>
+                <div>
+                    有
+                    {
+                        task.poll.votes.filter(
+                            (vote) => vote.vote === Vote.NEGATIVE
+                        ).length
+                    }
+                    人破坏
+                </div>
+            </Space>
+        ) : null;
+    }
 );
 
 export const TaskHistory = observer(() => {
+    const history = Array.from(
+        toJS(taskStore.taskPoll)?.history.reverse() ?? []
+    );
     return (
         <Card size="small">
             <List
-                dataSource={Array.from(
-                    toJS(taskStore.taskPoll)?.history ?? []
-                ).reverse()}
+                dataSource={history}
                 renderItem={(task, index) => (
                     <List.Item
                         style={{

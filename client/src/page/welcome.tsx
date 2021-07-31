@@ -1,7 +1,12 @@
 import React from "react";
-import { Form, Input, Layout, Button } from "antd";
+import { Form, Input, Layout, Button, Typography } from "antd";
 import { useHistory } from "react-router-dom";
 import { userStore } from "../store/user";
+import { Header } from "../components/layout/header";
+import { GameLayout } from "../components/layout/layout";
+import { Footer } from "../components/layout/footer";
+
+const { Title } = Typography;
 
 interface IFormValue {
     name: string;
@@ -23,11 +28,11 @@ export const Welcome = () => {
     );
 
     return (
-        <Layout style={{ height: "100vh" }}>
-            <Layout.Header>
-                <h1>阿瓦隆</h1>
-            </Layout.Header>
-            <Layout.Content>
+        <GameLayout>
+            <Header showLeave={false}>
+                <div>阿瓦隆</div>
+            </Header>
+            <Layout.Content style={{ position: "relative" }}>
                 <Form
                     form={form}
                     style={{ padding: "30px" }}
@@ -45,12 +50,34 @@ export const Welcome = () => {
                         <Input />
                     </Form.Item>
                 </Form>
+                <section
+                    style={{
+                        position: "absolute",
+                        width: "100%",
+                        textAlign: "center",
+                        overflow: "hidden",
+                        left: 0,
+                        top: "calc(50% - 30px)",
+                    }}
+                >
+                    <Title
+                        style={{
+                            fontWeight: 100,
+                            color: "#b9b9b9",
+                            letterSpacing: "20px",
+                            marginRight: "-20px",
+                            transform: "scaleY(0.8)",
+                        }}
+                    >
+                        AVALON
+                    </Title>
+                </section>
             </Layout.Content>
-            <Layout.Footer>
+            <Footer>
                 <Button block type="primary" onClick={form.submit}>
                     加入游戏
                 </Button>
-            </Layout.Footer>
-        </Layout>
+            </Footer>
+        </GameLayout>
     );
 };
