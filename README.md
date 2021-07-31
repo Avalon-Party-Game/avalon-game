@@ -1,7 +1,8 @@
 # Avalon Web Play (WIP) ![AVALON](https://github.com/hlhr202/avalon-game/actions/workflows/docker-image.yml/badge.svg)
 
 ## Screenshot
-<img src="screenshot.png" width="300"/>
+<img src="screenshot-login.jpeg" width="300" />
+<img src="screenshot.png" width="300" />
 
 ## Deployment pre-request
 
