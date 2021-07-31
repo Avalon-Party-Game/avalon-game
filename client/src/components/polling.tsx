@@ -62,18 +62,20 @@ export const Polling = observer(() => {
             ) : (
                 <>
                     <Row gutter={12} style={{ padding: "10px 0" }}>
-                        <Col span={12}>
-                            <Button
-                                block
-                                size="large"
-                                type="ghost"
-                                danger
-                                onClick={() => handleVote(Vote.NEGATIVE)}
-                            >
-                                失败
-                            </Button>
-                        </Col>
-                        <Col span={12}>
+                        {roomStore.side === "VILLAIN" && (
+                            <Col span={12}>
+                                <Button
+                                    block
+                                    size="large"
+                                    type="ghost"
+                                    danger
+                                    onClick={() => handleVote(Vote.NEGATIVE)}
+                                >
+                                    失败
+                                </Button>
+                            </Col>
+                        )}
+                        <Col span={roomStore.side === "VILLAIN" ? 12 : 24}>
                             <Button
                                 block
                                 size="large"

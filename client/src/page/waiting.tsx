@@ -1,9 +1,6 @@
-import DisconnectOutlined from "@ant-design/icons/DisconnectOutlined";
 import React from "react";
-import UserDeleteOutlined from "@ant-design/icons/UserDeleteOutlined";
-import WifiOutlined from "@ant-design/icons/WifiOutlined";
-import { autorun, toJS } from "mobx";
-import { Button, Col, Layout, List, Row } from "antd";
+import { autorun } from "mobx";
+import { Button, Col, Layout, Row } from "antd";
 import { Observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/state/stage";
@@ -12,6 +9,7 @@ import { useSocketClient } from "../lib/socket";
 import { Header } from "../components/layout/header";
 import { GameLayout } from "../components/layout/layout";
 import { Footer } from "../components/layout/footer";
+import { PlayerList } from "../components/player-list";
 
 export const WaitingRoom = () => {
     const history = useHistory();
@@ -46,43 +44,10 @@ export const WaitingRoom = () => {
     return (
         <GameLayout>
             <Header>
-                <div>等待中...</div>
+                <div>阿瓦隆 - 等待玩家</div>
             </Header>
             <Layout.Content style={{ padding: "30px" }}>
-                <Observer>
-                    {() => (
-                        <List
-                            bordered
-                            dataSource={toJS(roomStore.room).players}
-                            renderItem={(player) => (
-                                <List.Item
-                                    extra={
-                                        <Button
-                                            icon={
-                                                <UserDeleteOutlined
-                                                    onClick={() =>
-                                                        handleKickPlayer(
-                                                            player.name
-                                                        )
-                                                    }
-                                                />
-                                            }
-                                        ></Button>
-                                    }
-                                >
-                                    <span>
-                                        {player.connected ? (
-                                            <WifiOutlined />
-                                        ) : (
-                                            <DisconnectOutlined />
-                                        )}{" "}
-                                        {player.name}
-                                    </span>
-                                </List.Item>
-                            )}
-                        />
-                    )}
-                </Observer>
+                <PlayerList onKickPlayer={handleKickPlayer} />
             </Layout.Content>
             <Footer>
                 <Row gutter={12}>

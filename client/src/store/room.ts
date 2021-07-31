@@ -15,6 +15,14 @@ class RoomStore {
         return this.room.count >= 6 && this.room.count <= 10;
     }
 
+    get side() {
+        return this.playerInfo?.role?.side;
+    }
+
+    get role() {
+        return this.playerInfo?.role?.type;
+    }
+
     constructor() {
         makeAutoObservable(this);
     }
