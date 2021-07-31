@@ -74,7 +74,13 @@ export const Welcome = () => {
                 </section>
             </Layout.Content>
             <Footer>
-                <Button block type="primary" onClick={form.submit}>
+                <Button
+                    block
+                    ghost
+                    size="large"
+                    type="primary"
+                    onClick={form.submit}
+                >
                     加入游戏
                 </Button>
             </Footer>

@@ -52,7 +52,13 @@ export const WaitingRoom = () => {
             <Footer>
                 <Row gutter={12}>
                     <Col span={12}>
-                        <Button block onClick={handleKickOffline}>
+                        <Button
+                            ghost
+                            danger
+                            size="large"
+                            block
+                            onClick={handleKickOffline}
+                        >
                             清除不在线玩家
                         </Button>
                     </Col>
@@ -60,6 +66,8 @@ export const WaitingRoom = () => {
                         <Observer>
                             {() => (
                                 <Button
+                                    ghost
+                                    size="large"
                                     disabled={!roomStore.canStartGame}
                                     type="primary"
                                     style={{ width: "100%" }}

@@ -41,7 +41,7 @@ export const InGame = observer(() => {
                 onClose={() => setShowElection(false)}
             />
             <GameLayout>
-                <Header>
+                <Header enablePlayerList>
                     <div>
                         <span>阿瓦隆 - </span>
                         {(() => {
@@ -107,10 +107,12 @@ export const InGame = observer(() => {
                     </Collapse>
                 </Layout.Content>
                 <Footer>
-                    <Row gutter={6}>
+                    <Row gutter={12}>
                         <Col span={12}>
                             <Button
                                 block
+                                ghost
+                                size="large"
                                 type="primary"
                                 disabled={
                                     roomStore.stage === Stage.ELECTION ||
@@ -124,7 +126,9 @@ export const InGame = observer(() => {
                         <Col span={12}>
                             <Button
                                 block
-                                type="primary"
+                                ghost
+                                size="large"
+                                danger
                                 onClick={handleEndGame}
                             >
                                 结束游戏

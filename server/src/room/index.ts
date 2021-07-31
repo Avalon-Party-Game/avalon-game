@@ -2,21 +2,29 @@ import { autorun, makeAutoObservable, toJS } from "mobx";
 import { Player } from "./player";
 import { RolePicker, roleTable } from "../charater/utils";
 import { Stage } from "../state/stage";
+import { UniqueID } from "nodejs-snowflake";
 import type { ISerializable } from "../charater/base";
 import type { PlayerDTO } from "./player";
 import type { Socket } from "socket.io";
 import type { GameContext } from "../state";
 
+const uid = new UniqueID({ returnNumber: false, machineID: 1 });
 export interface RoomDTO {
     players: PlayerDTO[];
     count: number;
+    id: string | null;
 }
 
 export class Room implements ISerializable {
     players: Player[] = [];
+    id: string | null = null;
 
     get count() {
         return this.players.length;
+    }
+
+    get onlineCount() {
+        return this.players.filter((player) => player.connected).length;
     }
 
     constructor(public context: GameContext) {
@@ -33,6 +41,18 @@ export class Room implements ISerializable {
                 this.startGame();
             }
         });
+
+        autorun(() => {
+            if (
+                this.onlineCount === 0 &&
+                this.context.state.stage !== Stage.WAITING
+            ) {
+                console.log(
+                    "All user leaved but game is ongoing, cleanning stage"
+                );
+                this.context.state.updateStage(Stage.WAITING);
+            }
+        });
     }
 
     notify = () => {
@@ -45,6 +65,7 @@ export class Room implements ISerializable {
 
     startGame = () => {
         const rolePicker = new RolePicker(this.players.length);
+        this.id = uid.getUniqueID().toString();
         this.players.forEach((player) => {
             const role = rolePicker.pick();
             if (role) {
@@ -104,6 +125,7 @@ export class Room implements ISerializable {
         return {
             players: toJS(this.players).map((player) => player.toJSON()),
             count: toJS(this.count),
+            id: toJS(this.id),
         };
     };
 }

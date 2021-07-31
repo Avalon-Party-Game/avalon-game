@@ -8,10 +8,12 @@ class RoomStore {
     room: RoomDTO = {
         players: [],
         count: 0,
+        id: null,
     };
     playerInfo: PlayerDTO | null = null;
 
     get canStartGame() {
+        if (import.meta.env.DEV) return true;
         return this.room.count >= 6 && this.room.count <= 10;
     }
 
