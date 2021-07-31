@@ -2,13 +2,11 @@ import { autorun, makeAutoObservable, toJS } from "mobx";
 import { Player } from "./player";
 import { RolePicker, roleTable } from "../charater/utils";
 import { Stage } from "../state/stage";
-import { UniqueID } from "nodejs-snowflake";
+import { v4 as uuidv4 } from "uuid";
 import type { ISerializable } from "../charater/base";
 import type { PlayerDTO } from "./player";
 import type { Socket } from "socket.io";
 import type { GameContext } from "../state";
-
-const uid = new UniqueID({ returnNumber: false, machineID: 1 });
 export interface RoomDTO {
     players: PlayerDTO[];
     count: number;
@@ -65,7 +63,7 @@ export class Room implements ISerializable {
 
     startGame = () => {
         const rolePicker = new RolePicker(this.players.length);
-        this.id = uid.getUniqueID().toString();
+        this.id = uuidv4().toString();
         this.players.forEach((player) => {
             const role = rolePicker.pick();
             if (role) {

@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "npm run dev --workspace=client & npm run dev --workspace=server",
-        "build": "npm run build --workspace=client",
+        "build": "npm run build --workspace=client && npm run build --workspace=server",
         "start": "npm run start --workspace=server",
         "lint": "eslint --ext .tsx,.ts client/src/** server/src/**",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,6 +24,7 @@
         "@ant-design/icons": "^4.6.2",
         "@types/express": "^4.17.13",
         "@types/react-router-dom": "^5.1.8",
+        "@types/uuid": "^8.3.1",
         "antd": "^4.16.9",
         "esbuild": "^0.12.16",
         "esbuild-register": "^2.6.0",
@@ -31,7 +32,6 @@
         "mobx": "^6.3.2",
         "mobx-persist-store": "^1.0.3",
         "mobx-react": "^7.2.0",
-        "nodejs-snowflake": "^1.6.2",
         "nodemon": "^2.0.12",
         "npm-run-all": "^4.1.5",
         "react": "^17.0.0",
@@ -39,7 +39,8 @@
         "react-router-dom": "^5.2.0",
         "socket.io": "^4.1.3",
         "socket.io-client": "^4.1.3",
-        "styled-components": "^5.3.0"
+        "styled-components": "^5.3.0",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@types/react": "^17.0.0",
