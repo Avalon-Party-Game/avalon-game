@@ -7,7 +7,7 @@ RUN npm ci
 
 COPY . .
 RUN npm run build
-RUN rm -rf node_moduels/
+RUN rm -rf node_modules/
 EXPOSE 3100
 
 CMD ["npm", "start"]
