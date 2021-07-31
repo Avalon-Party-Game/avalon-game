@@ -14,6 +14,8 @@ FROM node:16-alpine
 WORKDIR /app
 COPY --from=BUILD_IMAGE /app/client/dist /app/client/dist
 COPY --from=BUILD_IMAGE /app/server/dist /app/server/dist
+COPY --from=BUILD_IMAGE /app/client/package.json /app/client/package.json
+COPY --from=BUILD_IMAGE /app/server/package.json /app/server/package.json
 COPY --from=BUILD_IMAGE /app/package.json /app/package.json
 
 EXPOSE 3100
