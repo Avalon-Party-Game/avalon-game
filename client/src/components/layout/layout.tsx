@@ -1,12 +1,11 @@
-import bg from "../../../assets/bg.jpg";
 // import merlin from "../../../assets/merlin.jpg";
 // import percival from "../../../assets/percival.jpg";
 // import modred from "../../../assets/modred.jpeg";
-import avalon from "../../../assets/avalon.jpg";
+
 import React from "react";
 import { Layout } from "antd";
 
-const imgArr = [bg, avalon];
+const imgArr = ["/images/bg.jpg", "/images/avalon.jpg"];
 
 export const GameLayout: React.FC = ({ children }) => {
     const pic = imgArr[Math.floor(Math.random() * imgArr.length)];
