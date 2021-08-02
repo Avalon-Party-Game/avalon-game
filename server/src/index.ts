@@ -25,7 +25,7 @@ const io = new Server(server, {
 });
 const context = new GameContext(io);
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
     const { name } = socket.handshake.query;
     if (!name || name === "" || typeof name !== "string") {
         // if name is not formatted, kick
@@ -33,15 +33,8 @@ io.on("connection", (socket) => {
         socket.disconnect(true);
     } else {
         console.log("new connection: " + name?.toString());
-        const player = context.room.joinPlayer(name, socket);
-        if (player) {
-            handlePlayerAction(player);
-        }
-        socket.on("disconnect", () => {
-            context.room.notify();
-            socket.leave("avalon");
-            socket.offAny();
-        });
+        const player = await context.room.joinPlayer(name, socket);
+        if (player) handlePlayerAction(player);
     }
 });
 

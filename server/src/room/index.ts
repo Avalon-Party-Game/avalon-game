@@ -80,8 +80,7 @@ export class Room implements ISerializable {
         return this.players.find((player) => player.name === name);
     };
 
-    joinPlayer = (name: string, socket: Socket) => {
-        socket.join("avalon");
+    joinPlayer = async (name: string, socket: Socket) => {
         const externalPlayerJoining =
             this.context.state.stage !== Stage.WAITING &&
             !this.getExistingPlayer(name);
@@ -90,6 +89,7 @@ export class Room implements ISerializable {
             socket.emit("kick");
             socket.disconnect(true);
         } else {
+            await socket.join("avalon");
             let player = this.getExistingPlayer(name);
             if (player) {
                 console.log("replacing player: " + name);
@@ -98,6 +98,7 @@ export class Room implements ISerializable {
                 }
                 player.replace(name, socket);
                 socket.emit("replace", { message: "NAME_EXIST" });
+                // force notify the room players
                 this.notify();
             } else {
                 player = new Player(this.context, name, socket);
@@ -121,7 +122,9 @@ export class Room implements ISerializable {
 
     toJSON: () => RoomDTO = () => {
         return {
-            players: toJS(this.players).map((player) => player.toJSON()),
+            players: toJS(this.players).map((player) =>
+                player.toSensitiveJSON()
+            ),
             count: toJS(this.count),
             id: toJS(this.id),
         };

@@ -1,6 +1,5 @@
-import { makeAutoObservable, toJS } from "mobx";
 import type { Socket } from "socket.io";
-import type { Character, ISerializable } from "../charater/base";
+import type { Character } from "../charater/base";
 import type { GameContext } from "../state";
 
 export interface PlayerDTO {
@@ -10,7 +9,7 @@ export interface PlayerDTO {
     connected?: boolean;
 }
 
-export class Player implements ISerializable {
+export class Player {
     connected = true;
 
     constructor(
@@ -19,7 +18,6 @@ export class Player implements ISerializable {
         public socket: Socket,
         public role?: Character
     ) {
-        makeAutoObservable(this, { socket: false, toJSON: false });
         this.notify();
         this.handleConnect();
     }
@@ -30,7 +28,12 @@ export class Player implements ISerializable {
 
     handleConnect = () => {
         this.connected = true;
-        this.socket.on("disconnect", () => this.updateConnected(false));
+        this.socket.on("disconnect", async () => {
+            this.updateConnected(false);
+            this.socket.offAny();
+            await this.socket.leave("avalon");
+            this.context.room.notify();
+        });
     };
 
     replace = (name: string, socket: Socket) => {
@@ -39,6 +42,7 @@ export class Player implements ISerializable {
         this.socket = socket;
         this.handleConnect();
         this.notify();
+        this.context.room.notify();
     };
 
     notify = () => {
@@ -50,9 +54,16 @@ export class Player implements ISerializable {
 
     toJSON: () => PlayerDTO = () => {
         return {
-            name: toJS(this.name),
-            role: toJS(this.role),
-            connected: this.socket.connected,
+            name: this.name,
+            role: this.role,
+            connected: this.connected,
+        };
+    };
+
+    toSensitiveJSON: () => PlayerDTO = () => {
+        return {
+            name: this.name,
+            connected: this.connected,
         };
     };
 }
