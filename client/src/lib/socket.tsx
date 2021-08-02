@@ -14,7 +14,7 @@ import type { TaskDTO } from "../../../server/src/task";
 
 const ws = import.meta.env.DEV
     ? "ws://localhost:3100"
-    : `ws://${window.location.host}`;
+    : `wss://${window.location.host}`;
 
 export class SocketClient {
     private static _instance: SocketClient;
