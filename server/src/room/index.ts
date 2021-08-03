@@ -1,9 +1,8 @@
-import { autorun, makeAutoObservable, toJS } from "mobx";
+import { autorun, IReactionDisposer, observable, toJS } from "mobx";
 import { Player } from "./player";
 import { RolePicker, roleTable } from "../charater/utils";
 import { Stage } from "../state/stage";
 import { v4 as uuidv4 } from "uuid";
-import type { ISerializable } from "../charater/base";
 import type { PlayerDTO } from "./player";
 import type { Socket } from "socket.io";
 import type { GameContext } from "../state";
@@ -13,9 +12,11 @@ export interface RoomDTO {
     id: string | null;
 }
 
-export class Room implements ISerializable {
-    players: Player[] = [];
-    id: string | null = null;
+export class Room {
+    players = observable.array<Player>([], { deep: false });
+    id = observable.box<string | null>(null);
+
+    private disposers: IReactionDisposer[] = [];
 
     get count() {
         return this.players.length;
@@ -26,44 +27,50 @@ export class Room implements ISerializable {
     }
 
     constructor(public context: GameContext) {
-        makeAutoObservable(this, {
-            context: false,
-        });
-
-        autorun(() => {
-            this.notify();
-        });
-
-        autorun(() => {
-            if (this.context.state.stage === Stage.STARTED) {
-                this.startGame();
-            }
-        });
-
-        autorun(() => {
-            if (
-                this.onlineCount === 0 &&
-                this.context.state.stage !== Stage.WAITING
-            ) {
-                console.log(
-                    "All user leaved but game is ongoing, cleanning stage"
-                );
-                this.context.state.updateStage(Stage.WAITING);
-            }
-        });
+        this.init();
     }
+
+    init = () => {
+        this.disposers.push(
+            autorun(() => {
+                this.notify();
+            }),
+            autorun(() => {
+                if (this.context.state.stage === Stage.STARTED) {
+                    this.startGame();
+                }
+            }),
+            autorun(() => {
+                if (
+                    this.onlineCount === 0 &&
+                    this.context.state.stage !== Stage.WAITING
+                ) {
+                    console.log(
+                        "All user leaved but game is ongoing, cleanning stage"
+                    );
+                    this.context.state.updateStage(Stage.WAITING);
+                }
+            })
+        );
+    };
+
+    destroy = () => {
+        this.disposers.forEach((dispose) => dispose());
+    };
 
     notify = () => {
         this.context.boradcast.emit("roomChange", this.toJSON());
     };
 
     kickOffline = () => {
-        this.players = this.players.filter((player) => player.socket.connected);
+        this.players.replace(
+            this.players.filter((player) => player.socket.connected)
+        );
     };
 
     startGame = () => {
         const rolePicker = new RolePicker(this.players.length);
-        this.id = uuidv4().toString();
+        this.id.set(uuidv4().toString());
         this.players.forEach((player) => {
             const role = rolePicker.pick();
             if (role) {
@@ -72,7 +79,7 @@ export class Room implements ISerializable {
             }
         });
         this.players.forEach((player) => {
-            player.socket.emit("playerChange", player);
+            player.socket.emit("playerChange", player.toJSON());
         });
     };
 
@@ -114,9 +121,7 @@ export class Room implements ISerializable {
             console.log("kicking player: " + name);
             existingPlayer.socket.emit("kick");
             existingPlayer.socket.disconnect(true);
-            this.players = this.players.filter(
-                (player) => player.name !== name
-            );
+            this.players.remove(existingPlayer);
         }
     };
 
@@ -125,8 +130,8 @@ export class Room implements ISerializable {
             players: toJS(this.players).map((player) =>
                 player.toSensitiveJSON()
             ),
-            count: toJS(this.count),
-            id: toJS(this.id),
+            count: this.count,
+            id: this.id.get(),
         };
     };
 }

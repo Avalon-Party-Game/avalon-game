@@ -1,6 +1,9 @@
+import { observable } from "mobx";
 import type { Socket } from "socket.io";
 import type { Character } from "../charater/base";
 import type { GameContext } from "../state";
+import { Stage } from "../state/stage";
+import type { Vote } from "../task";
 
 export interface PlayerDTO {
     name: string;
@@ -10,7 +13,11 @@ export interface PlayerDTO {
 }
 
 export class Player {
-    connected = true;
+    private _connected = observable.box(false);
+
+    get connected() {
+        return this._connected.get();
+    }
 
     constructor(
         public context: GameContext,
@@ -23,16 +30,34 @@ export class Player {
     }
 
     updateConnected = (connected: boolean) => {
-        this.connected = connected;
+        this._connected.set(connected);
+    };
+
+    handleAction = () => {
+        const context = this.context;
+        this.socket.on("startWaiting", () =>
+            context.state.updateStage(Stage.WAITING)
+        );
+        this.socket.on("startGame", () =>
+            context.state.updateStage(Stage.STARTED)
+        );
+        this.socket.on("startNewElection", context.taskPoll.startNewElection);
+        this.socket.on("kickPlayer", context.room.kickPlayer);
+        this.socket.on("kickOffline", context.room.kickOffline);
+        this.socket.on("voteForPlayers", (vote: Vote) => {
+            context.taskPoll.voteForPlayersFrom(this.name, vote);
+        });
+        this.socket.on("voteForTask", (vote: Vote) => {
+            context.taskPoll.voteForTaskFrom(this.name, vote);
+        });
     };
 
     handleConnect = () => {
-        this.connected = true;
+        this.updateConnected(true);
         this.socket.on("disconnect", async () => {
-            this.updateConnected(false);
-            this.socket.offAny();
             await this.socket.leave("avalon");
-            this.context.room.notify();
+            this.socket.offAny();
+            this.updateConnected(false);
         });
     };
 
@@ -42,7 +67,6 @@ export class Player {
         this.socket = socket;
         this.handleConnect();
         this.notify();
-        this.context.room.notify();
     };
 
     notify = () => {
