@@ -8,7 +8,10 @@ import { Layout } from "antd";
 const imgArr = ["/images/bg.jpg", "/images/avalon.jpg"];
 
 export const GameLayout: React.FC = ({ children }) => {
-    const pic = imgArr[Math.floor(Math.random() * imgArr.length)];
+    const pic = React.useMemo(
+        () => imgArr[Math.floor(Math.random() * imgArr.length)],
+        []
+    );
     return (
         <Layout
             style={{

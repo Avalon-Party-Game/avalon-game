@@ -1,5 +1,6 @@
 import React from "react";
-import { Card, List, Space } from "antd";
+import styled from "styled-components";
+import { Card, List } from "antd";
 import { observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/state/stage";
@@ -7,6 +8,16 @@ import { taskStore } from "../store/task";
 import { toJS } from "mobx";
 import { Vote } from "../../../server/src/task";
 import type { ITask } from "../../../server/src/task";
+
+const RecordStyle = styled.p`
+    margin-bottom: 0;
+    &:not(:last-child) {
+        margin-bottom: 0.5em;
+    }
+    > span.player {
+        margin-right: 10px;
+    }
+`;
 
 const ElectionRecord = observer(
     ({ task, index }: { task: ITask; index: number }) => {
@@ -19,32 +30,38 @@ const ElectionRecord = observer(
         const result = positiveCount > roomStore.room.count / 2;
 
         return pending ? (
-            <div>等待投票任务队伍结果...</div>
+            <RecordStyle>等待投票任务队伍结果...</RecordStyle>
         ) : (
             <>
-                <Space>
-                    <div>做任务队伍：</div>
+                <RecordStyle>
+                    <span>做任务队伍：</span>
                     {task.elections.players.map((player) => (
-                        <div key={player}>{player}</div>
+                        <span className="player" key={player}>
+                            {player}
+                        </span>
                     ))}
-                    <div>（{result ? "成功发车" : "发车失败"}）</div>
-                </Space>
-                <Space>
-                    <div>同意该队伍：</div>
+                    <span>（{result ? "成功发车" : "发车失败"}）</span>
+                </RecordStyle>
+                <RecordStyle>
+                    <span>同意该队伍：</span>
                     {task.elections.votes
                         .filter((vote) => vote.vote === Vote.POSITIVE)
                         .map((vote) => (
-                            <div key={vote.player}>{vote.player}</div>
+                            <span className="player" key={vote.player}>
+                                {vote.player}
+                            </span>
                         ))}
-                </Space>
-                <Space>
-                    <div>反对该队伍：</div>
+                </RecordStyle>
+                <RecordStyle>
+                    <span>反对该队伍：</span>
                     {task.elections.votes
                         .filter((vote) => vote.vote === Vote.NEGATIVE)
                         .map((vote) => (
-                            <div key={vote.player}>{vote.player}</div>
+                            <span className="player" key={vote.player}>
+                                {vote.player}
+                            </span>
                         ))}
-                </Space>
+                </RecordStyle>
             </>
         );
     }
@@ -66,9 +83,9 @@ const TaskRecord = observer(
         return waiting ? (
             <div>等待任务结果...</div>
         ) : electionResult && task.poll ? (
-            <Space>
-                <div>任务结果：</div>
-                <div>
+            <RecordStyle>
+                <span>任务结果：</span>
+                <span>
                     有
                     {
                         task.poll.votes.filter(
@@ -76,8 +93,8 @@ const TaskRecord = observer(
                         ).length
                     }
                     人破坏
-                </div>
-            </Space>
+                </span>
+            </RecordStyle>
         ) : null;
     }
 );

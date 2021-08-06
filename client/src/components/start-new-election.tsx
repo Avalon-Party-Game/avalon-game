@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Form, Select, message } from "antd";
+import { Checkbox, Col, Form, message, Modal, Row } from "antd";
 import { observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { useSocketClient } from "../lib/socket";
@@ -33,16 +33,15 @@ export const StartNewElection = observer((props: IProps) => {
         >
             <Form form={form}>
                 <Form.Item name="players">
-                    <Select mode="multiple">
-                        {roomStore.room.players.map((player) => (
-                            <Select.Option
-                                key={player.name}
-                                value={player.name}
-                            >
-                                {player.name}
-                            </Select.Option>
-                        ))}
-                    </Select>
+                    <Checkbox.Group style={{ width: "100%" }}>
+                        <Row>
+                            {roomStore.room.players.map(({ name }) => (
+                                <Col key={name} span={12}>
+                                    <Checkbox value={name}>{name}</Checkbox>
+                                </Col>
+                            ))}
+                        </Row>
+                    </Checkbox.Group>
                 </Form.Item>
             </Form>
         </Modal>

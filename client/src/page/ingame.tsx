@@ -14,6 +14,7 @@ import { useSocketClient } from "../lib/socket";
 import { Header } from "../components/layout/header";
 import { GameLayout } from "../components/layout/layout";
 import { Footer } from "../components/layout/footer";
+import { configStore } from "../store/config";
 
 export const InGame = observer(() => {
     const socketClient = useSocketClient();
@@ -61,7 +62,11 @@ export const InGame = observer(() => {
                 <Layout.Content
                     style={{ overflow: "auto", paddingBottom: "40px" }}
                 >
-                    <Collapse defaultActiveKey={["1", "2", "3"]} ghost>
+                    <Collapse
+                        defaultActiveKey={configStore.activePanel}
+                        onChange={configStore.updateActivePanel}
+                        ghost
+                    >
                         <Collapse.Panel header="展示/隐藏 玩家信息" key="1">
                             <Card
                                 size="small"
