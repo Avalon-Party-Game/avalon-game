@@ -7,6 +7,8 @@ import { Server } from "socket.io";
 
 configure({ enforceActions: "never" });
 
+const port = process.env.PORT;
+
 const app = express();
 
 const server = createServer(app);
@@ -44,6 +46,6 @@ const serveWebSocket = () => {
 serveWebPage();
 serveWebSocket();
 
-server.listen(3100, () => {
-    console.log("Server started at 3100");
+server.listen(port, () => {
+    console.log(`Server started at ${port}`);
 });
