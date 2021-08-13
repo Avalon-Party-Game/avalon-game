@@ -10,6 +10,7 @@
         "build": "npm run build --workspace=client && npm run build --workspace=server",
         "start": "npm run start --workspace=server",
         "lint": "eslint --ext .tsx,.ts client/src/** server/src/**",
+        "postinstall": "npm run build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
