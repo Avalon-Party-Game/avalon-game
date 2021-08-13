@@ -16,6 +16,9 @@
         "type": "git",
         "url": "git+https://github.com/hlhr202/avalon-game.git"
     },
+    "engines": {
+        "node": "16.x"
+    },
     "author": "haoran",
     "license": "ISC",
     "bugs": {
