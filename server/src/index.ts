@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 
 configure({ enforceActions: "never" });
 
-const port = process.env.PORT;
+const port = process.env.PORT ?? process.env.LEANCLOUD_APP_PORT ?? 9999;
 
 const app = express();
 

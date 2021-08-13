@@ -20,4 +20,4 @@ COPY --from=BUILD_IMAGE /app/package.json /app/package.json
 
 EXPOSE 3100
 
-CMD ["npm", "start"]
+CMD ["npm", "start:docker"]
