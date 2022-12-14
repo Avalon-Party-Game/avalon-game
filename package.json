@@ -35,7 +35,7 @@
         "antd": "^4.16.9",
         "esbuild": "^0.12.16",
         "esbuild-register": "^2.6.0",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "mobx": "^6.3.2",
         "mobx-persist-store": "^1.0.3",
         "mobx-react": "^7.2.0",
