@@ -4,7 +4,7 @@ import { Button, Col, Layout, Row } from "antd";
 import { Observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/state/stage";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { useSocketClient } from "../lib/socket";
 import { Header } from "../components/layout/header";
 import { GameLayout } from "../components/layout/layout";

@@ -1,15 +1,18 @@
-FROM node:16-alpine AS BUILD_IMAGE
+FROM node:18-slim AS BUILD_IMAGE
 
 WORKDIR /app
 
-COPY package.json package-lock.json /app/
-RUN npm ci
+RUN npm install -g pnpm
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml /app/
+RUN pnpm i
 
 COPY . .
-RUN npm run build
+RUN pnpm build
 RUN rm -rf node_modules/
 
-FROM node:16-alpine
+FROM node:18-slim
+
+RUN npm install -g pnpm
 
 WORKDIR /app
 COPY --from=BUILD_IMAGE /app/client/dist /app/client/dist
@@ -20,4 +23,4 @@ COPY --from=BUILD_IMAGE /app/package.json /app/package.json
 
 EXPOSE 3100
 
-CMD ["npm", "start:docker"]
+CMD ["npm", "start"]

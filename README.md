@@ -6,7 +6,7 @@
 
 ## Deployment pre-request
 
-Node.js 16+ or Docker
+Node.js 18 or Docker
 
 ## Development
 

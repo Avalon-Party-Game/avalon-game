@@ -12,9 +12,11 @@ import type { Stage } from "../../../server/src/state/stage";
 import type { PlayerDTO } from "../../../server/src/room/player";
 import type { TaskDTO } from "../../../server/src/task";
 
-const ws = import.meta.env.DEV
-    ? "ws://localhost:3100"
-    : `wss://${window.location.host}`;
+const isHttps = window.location.protocol === "https:";
+
+const ws = isHttps
+    ? `wss://${window.location.host}`
+    : `ws://${window.location.host}`;
 
 export class SocketClient {
     private static _instance: SocketClient;

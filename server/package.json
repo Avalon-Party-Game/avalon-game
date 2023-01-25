@@ -1,5 +1,5 @@
 {
-  "name": "@hlhr202/server",
+  "name": "@hlhr202/avalon-server",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {

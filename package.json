@@ -5,13 +5,12 @@
     "main": "index.js",
     "scripts": {
         "dev": "npm run dev:client & npm run dev:server",
-        "dev:client": "npm run dev --workspace=client",
-        "dev:server": "PORT=3100 npm run dev --workspace=server",
-        "build": "npm run build --workspace=client && npm run build --workspace=server",
-        "start": "npm run start --workspace=server",
-        "start:docker": "PORT=3100 npm run start --workspace=server",
+        "dev:client": "pnpm --filter='@hlhr202/avalon-client' dev",
+        "dev:server": "PORT=3100 pnpm --filter='@hlhr202/avalon-server' dev",
+        "build": "pnpm --filter='@hlhr202/avalon-client' build && pnpm --filter='@hlhr202/avalon-server' build",
+        "start": "PORT=3100 pnpm --filter='@hlhr202/avalon-server' start",
         "lint": "eslint --ext .tsx,.ts client/src/** server/src/**",
-        "postinstall": "npm run build",
+        "postinstall": "pnpm build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -19,7 +18,7 @@
         "url": "git+https://github.com/hlhr202/avalon-game.git"
     },
     "engines": {
-        "node": "16.x"
+        "node": "18.x"
     },
     "author": "haoran",
     "license": "ISC",
@@ -36,6 +35,7 @@
         "esbuild": "^0.12.16",
         "esbuild-register": "^2.6.0",
         "express": "^4.17.1",
+        "history": "4.10.1",
         "mobx": "^6.3.2",
         "mobx-persist-store": "^1.0.3",
         "mobx-react": "^7.2.0",
@@ -50,12 +50,13 @@
         "uuid": "^8.3.2"
     },
     "devDependencies": {
+        "@types/history": "4.7.11",
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "@types/styled-components": "^5.1.12",
         "@typescript-eslint/eslint-plugin": "^4.28.5",
         "@typescript-eslint/parser": "^4.28.5",
-        "@vitejs/plugin-react-refresh": "^1.3.1",
+        "@vitejs/plugin-react": "^3.0.1",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^3.4.0",
@@ -63,11 +64,8 @@
         "eslint-plugin-react-hooks": "^4.2.0",
         "prettier": "^2.3.2",
         "typescript": "^4.3.5",
-        "vite": "^2.4.4",
-        "vite-plugin-pwa": "^0.9.3"
-    },
-    "workspaces": [
-        "server",
-        "client"
-    ]
+        "vite": "^4.0.4",
+        "vite-plugin-pwa": "^0.14.1",
+        "workbox-window": "6.5.4"
+    }
 }

@@ -8,7 +8,7 @@ import { roomStore } from "../store/room";
 import { Stage } from "../../../server/src/state/stage";
 import { StartNewElection } from "../components/start-new-election";
 import { TaskHistory } from "../components/history";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { userStore } from "../store/user";
 import { useSocketClient } from "../lib/socket";
 import { Header } from "../components/layout/header";
