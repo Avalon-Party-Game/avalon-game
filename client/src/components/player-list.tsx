@@ -7,12 +7,14 @@ import { Observer } from "mobx-react";
 import { roomStore } from "../store/room";
 import { toJS } from "mobx";
 import { Stage } from "../../../server/src/state/stage";
+import { useSocketClient } from "../lib/socket";
 
 interface IProps {
     onKickPlayer?: (name: string) => void;
 }
 
 export const PlayerList: React.FC<IProps> = ({ onKickPlayer }) => {
+    const { socket } = useSocketClient();
     return (
         <Observer>
             {() => (
@@ -59,6 +61,13 @@ export const PlayerList: React.FC<IProps> = ({ onKickPlayer }) => {
                             </List.Item>
                         )}
                     />
+                    <Button
+                        danger
+                        style={{ marginTop: "20px", width: "100%" }}
+                        onClick={() => socket.emit("reset")}
+                    >
+                        重置
+                    </Button>
                 </>
             )}
         </Observer>

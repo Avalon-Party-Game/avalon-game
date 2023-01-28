@@ -62,6 +62,12 @@ export class Room {
         this.context.boradcast.emit("roomChange", this.toJSON());
     };
 
+    reset = () => {
+        this.destroy();
+        this.init();
+        this.context.state.updateStage(Stage.WAITING);
+    };
+
     kickOffline = () => {
         this.players.replace(
             this.players.filter((player) => player.socket.connected)

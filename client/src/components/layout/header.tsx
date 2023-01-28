@@ -71,7 +71,7 @@ export const Header: React.FC<{
                 </Row>
             </Layout.Header>
             <Modal
-                visible={showPlayerList}
+                open={showPlayerList}
                 title="玩家列表"
                 footer={null}
                 onCancel={() => setShowPlayerList(false)}

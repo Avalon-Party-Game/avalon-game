@@ -33,7 +33,7 @@ export const InGame = observer(() => {
         [history]
     );
     const handleEndGame = React.useCallback(() => {
-        socketClient.socket.emit("startWaiting");
+        socketClient.socket.emit("reset");
     }, [socketClient]);
     return (
         <>

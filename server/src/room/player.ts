@@ -50,6 +50,7 @@ export class Player {
         this.socket.on("voteForTask", (vote: Vote) => {
             context.taskPoll.voteForTaskFrom(this.name, vote);
         });
+        this.socket.on("reset", context.room.reset);
     };
 
     handleConnect = () => {

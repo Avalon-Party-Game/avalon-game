@@ -34,7 +34,7 @@ const ElectionRecord = observer(
         ) : (
             <>
                 <RecordStyle>
-                    <span>做任务队伍：</span>
+                    <span>组队：</span>
                     {task.elections.players.map((player) => (
                         <span className="player" key={player}>
                             {player}
@@ -43,7 +43,7 @@ const ElectionRecord = observer(
                     <span>（{result ? "成功发车" : "发车失败"}）</span>
                 </RecordStyle>
                 <RecordStyle>
-                    <span>同意该队伍：</span>
+                    <span>同意组队：</span>
                     {task.elections.votes
                         .filter((vote) => vote.vote === Vote.POSITIVE)
                         .map((vote) => (
@@ -53,7 +53,7 @@ const ElectionRecord = observer(
                         ))}
                 </RecordStyle>
                 <RecordStyle>
-                    <span>反对该队伍：</span>
+                    <span>反对组队：</span>
                     {task.elections.votes
                         .filter((vote) => vote.vote === Vote.NEGATIVE)
                         .map((vote) => (
@@ -80,11 +80,17 @@ const TaskRecord = observer(
 
         const electionResult = electionPositiveCount > roomStore.room.count / 2;
 
+        const taskPositiveCount = task.poll.votes.filter(
+            (vote) => vote.vote === Vote.POSITIVE
+        ).length;
+
+        const taskResult = taskPositiveCount > task.poll.votes.length / 2;
+
         return waiting ? (
             <div>等待任务结果...</div>
         ) : electionResult && task.poll ? (
             <RecordStyle>
-                <span>任务结果：</span>
+                <span>任务结果：{taskResult ? "成功" : "失败"}，</span>
                 <span>
                     有
                     {

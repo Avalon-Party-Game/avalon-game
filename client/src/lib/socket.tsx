@@ -14,7 +14,9 @@ import type { TaskDTO } from "../../../server/src/task";
 
 const isHttps = window.location.protocol === "https:";
 
-const ws = isHttps
+const ws = import.meta.env.DEV
+    ? "ws://localhost:3100"
+    : isHttps
     ? `wss://${window.location.host}`
     : `ws://${window.location.host}`;
 

@@ -27,7 +27,7 @@ export const StartNewElection = observer((props: IProps) => {
     return (
         <Modal
             title="选择执行任务的人"
-            visible={props.visible}
+            open={props.visible}
             onCancel={props.onClose}
             onOk={handleSubmit}
         >
